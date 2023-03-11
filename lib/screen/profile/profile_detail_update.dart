@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
+import 'package:maxsociety/main.dart';
+import 'package:maxsociety/model/user_profile_model.dart';
+import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/button_active.dart';
 import 'package:maxsociety/widget/custom_textfield.dart';
@@ -26,15 +29,30 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
   final TextEditingController _carpetAreaCtrl = TextEditingController();
   final TextEditingController _superBuiltUpAreaCtrl = TextEditingController();
   String _gender = genderList.first;
-
+  late UserProfile userProfile;
   @override
   Widget build(BuildContext context) {
+    userProfile =
+        UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
+    loadUserDetail();
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'Profile Detail'),
       ),
       body: getBody(context),
     );
+  }
+
+  loadUserDetail() {
+    _nameCtrl.text = userProfile.userName ?? '';
+    _emailCtrl.text = userProfile.email ?? '';
+    _phoneCtrl.text = userProfile.mobileNo ?? '';
+    _gender = userProfile.gender ?? '';
+    _flatNumberCtrl.text = userProfile.flats?.flatNo ?? '';
+    _floorNumberCtrl.text = userProfile.flats?.floor.toString() ?? '';
+    _blockCtrl.text = userProfile.flats?.wing ?? '';
+    _superBuiltUpAreaCtrl.text = userProfile.flats?.buitlUpArea ?? '';
+    _carpetAreaCtrl.text = userProfile.flats?.carpetArea ?? '';
   }
 
   getBody(BuildContext context) {
@@ -120,7 +138,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
                 controller: _flatNumberCtrl,
                 keyboardType: TextInputType.none,
                 obscure: false,
-                icon: Icons.person_outline,
+                icon: Icons.home_outlined,
               ),
             ),
             const SizedBox(
@@ -132,7 +150,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
                 controller: _floorNumberCtrl,
                 keyboardType: TextInputType.number,
                 obscure: false,
-                icon: Icons.person_outline,
+                icon: Icons.home_outlined,
               ),
             ),
           ],
@@ -145,7 +163,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _blockCtrl,
           keyboardType: TextInputType.name,
           obscure: false,
-          icon: Icons.person_outline,
+          icon: Icons.home_outlined,
         ),
         const SizedBox(
           height: defaultPadding / 2,
@@ -155,7 +173,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _superBuiltUpAreaCtrl,
           keyboardType: TextInputType.number,
           obscure: false,
-          icon: Icons.person_outline,
+          icon: Icons.home_outlined,
         ),
         const SizedBox(
           height: defaultPadding / 2,
@@ -165,7 +183,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _carpetAreaCtrl,
           keyboardType: TextInputType.number,
           obscure: false,
-          icon: Icons.person_outline,
+          icon: Icons.home_outlined,
         ),
         const SizedBox(
           height: defaultPadding,
