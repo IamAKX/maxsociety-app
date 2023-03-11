@@ -70,7 +70,7 @@ class _EventScreenState extends State<EventScreen> {
                       ),
                 ),
                 Text(
-                  userProfile.flats?.flatNo ?? '',
+                  'Flat ${userProfile.flats?.flatNo ?? ''}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

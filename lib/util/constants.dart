@@ -27,6 +27,7 @@ List<String> relationshipList = [
   'SON',
   'BROTHER',
   'SISTER',
+  'TENANT',
   'OTHER'
 ];
 

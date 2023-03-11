@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:maxsociety/main.dart';
+import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/login/login_screen.dart';
 import 'package:maxsociety/screen/profile/family_screen.dart';
 import 'package:maxsociety/screen/profile/profile_detail_update.dart';
@@ -7,8 +12,14 @@ import 'package:maxsociety/screen/profile/profile_menu_model.dart';
 import 'package:maxsociety/screen/profile/vehicle_screen.dart';
 import 'package:maxsociety/service/auth_service.dart';
 import 'package:maxsociety/util/colors.dart';
+import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/heading.dart';
+
+import '../../service/snakbar_service.dart';
+import '../../service/storage_service.dart';
+import '../../util/enums.dart';
+import '../../util/helper_methods.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,8 +29,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late UserProfile userProfile;
+
   @override
   Widget build(BuildContext context) {
+    userProfile =
+        UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'Profile'),
@@ -58,14 +73,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(defaultPadding),
                     child: Image.asset(
-                      'assets/image/demouser.jpeg',
+                      'assets/image/user.png',
                       width: 120,
                       height: 120,
                       fit: BoxFit.cover,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        File imageFile = File(image.path);
+                        SnackBarService.instance
+                            .showSnackBarInfo('Uploading file, please wait');
+                        String imageUrl = await StorageService.uploadEventImage(
+                          imageFile,
+                          getFileName(imageFile),
+                          StorageFolders.profileImage.name,
+                        );
+                      }
+                    },
                     child: const Text('Edit Picture'),
                   )
                 ],
@@ -79,18 +108,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'John Doe',
+                      userProfile.userName ?? '',
                       style:
                           Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                     ),
                     Text(
-                      'john.doe@email.com',
+                      userProfile.email ?? '',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(
-                      'Block A   •   Flat 105',
+                      '${userProfile.flats?.tower ?? ''}   •   Flat ${userProfile.flats?.flatNo ?? ''}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(
