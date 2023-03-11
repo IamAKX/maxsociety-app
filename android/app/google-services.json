@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "819843411741",
+    "project_id": "max-society",
+    "storage_bucket": "max-society.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819843411741:android:ee365ecfc300ae3920bbf4",
+        "android_client_info": {
+          "package_name": "com.maxsociety.maxsociety"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819843411741-vom2m5rico62gl4bjmrjlfrgg2oc1t34.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3JBhIxp8bQxcvR4rdvCWpLa2YeIvFUuk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819843411741-vom2m5rico62gl4bjmrjlfrgg2oc1t34.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
