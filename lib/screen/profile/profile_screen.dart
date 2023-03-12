@@ -56,8 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
     _api = Provider.of<ApiProvider>(context);
-    userProfile =
-        UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
+
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'Profile'),
@@ -254,7 +253,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushNamed(menuItems[index].navigatorRoute!);
+                        .pushNamed(menuItems[index].navigatorRoute!)
+                        .then((value) => loadUser());
                   },
                 );
               },

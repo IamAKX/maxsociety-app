@@ -7,7 +7,10 @@ import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/button_active.dart';
 import 'package:maxsociety/widget/custom_textfield.dart';
 import 'package:maxsociety/widget/heading.dart';
+import 'package:provider/provider.dart';
 
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
 import '../../util/constants.dart';
 
 class ProfileDetailUpdateScreen extends StatefulWidget {
@@ -30,20 +33,20 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
   final TextEditingController _superBuiltUpAreaCtrl = TextEditingController();
   String _gender = genderList.first;
   late UserProfile userProfile;
+  late ApiProvider _api;
+
   @override
-  Widget build(BuildContext context) {
-    userProfile =
-        UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
-    loadUserDetail();
-    return Scaffold(
-      appBar: AppBar(
-        title: Heading(title: 'Profile Detail'),
-      ),
-      body: getBody(context),
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadUser(),
     );
   }
 
-  loadUserDetail() {
+  loadUser() {
+    userProfile =
+        UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
     _nameCtrl.text = userProfile.userName ?? '';
     _emailCtrl.text = userProfile.email ?? '';
     _phoneCtrl.text = userProfile.mobileNo ?? '';
@@ -53,6 +56,20 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
     _blockCtrl.text = userProfile.flats?.wing ?? '';
     _superBuiltUpAreaCtrl.text = userProfile.flats?.buitlUpArea ?? '';
     _carpetAreaCtrl.text = userProfile.flats?.carpetArea ?? '';
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Heading(title: 'Profile Detail'),
+      ),
+      body: getBody(context),
+    );
   }
 
   getBody(BuildContext context) {
@@ -83,7 +100,8 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _emailCtrl,
           keyboardType: TextInputType.emailAddress,
           obscure: false,
-          icon: Icons.person_outline,
+          enabled: false,
+          icon: Icons.email_outlined,
         ),
         const SizedBox(
           height: defaultPadding / 2,
@@ -93,7 +111,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _phoneCtrl,
           keyboardType: TextInputType.phone,
           obscure: false,
-          icon: Icons.person_outline,
+          icon: Icons.phone_outlined,
         ),
         const SizedBox(
           height: defaultPadding / 2,
@@ -138,6 +156,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
                 controller: _flatNumberCtrl,
                 keyboardType: TextInputType.none,
                 obscure: false,
+                enabled: false,
                 icon: Icons.home_outlined,
               ),
             ),
@@ -150,6 +169,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
                 controller: _floorNumberCtrl,
                 keyboardType: TextInputType.number,
                 obscure: false,
+                enabled: false,
                 icon: Icons.home_outlined,
               ),
             ),
@@ -163,6 +183,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _blockCtrl,
           keyboardType: TextInputType.name,
           obscure: false,
+          enabled: false,
           icon: Icons.home_outlined,
         ),
         const SizedBox(
@@ -173,6 +194,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _superBuiltUpAreaCtrl,
           keyboardType: TextInputType.number,
           obscure: false,
+          enabled: false,
           icon: Icons.home_outlined,
         ),
         const SizedBox(
@@ -183,14 +205,34 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           controller: _carpetAreaCtrl,
           keyboardType: TextInputType.number,
           obscure: false,
+          enabled: false,
           icon: Icons.home_outlined,
         ),
         const SizedBox(
           height: defaultPadding,
         ),
         ActiveButton(
-          onPressed: () {},
-          label: 'Update',
+          onPressed: () async {
+            if (_nameCtrl.text.isEmpty || _phoneCtrl.text.isEmpty) {
+              SnackBarService.instance
+                  .showSnackBarError('None of the field can be empty');
+              return;
+            }
+            userProfile.userName = _nameCtrl.text;
+            userProfile.mobileNo = _phoneCtrl.text;
+            userProfile.gender = _gender;
+            _api.updateUser(userProfile).then((value) {
+              if (value) {
+                userProfile.userName = _nameCtrl.text;
+                userProfile.mobileNo = _phoneCtrl.text;
+                userProfile.gender = _gender;
+                prefs.setString(PreferenceKey.user, userProfile.toJson());
+                Navigator.of(context).pop();
+              }
+            });
+          },
+          label: _api.status == ApiStatus.loading ? 'Please wait...' : 'Update',
+          isDisabled: _api.status == ApiStatus.loading,
         )
       ],
     );
