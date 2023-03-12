@@ -474,10 +474,11 @@ class ApiProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<CircularListModel> getCircularsByCircularType(String circularType) async {
+  Future<CircularListModel> getCircularsByCircularType(
+      String circularType) async {
     status = ApiStatus.loading;
     notifyListeners();
-    late CircularListModel circularList;
+    CircularListModel circularList = CircularListModel(data: []);
     try {
       Response response = await _dio.get(
         '${Api.getCircularsByCircularType}$circularType',
@@ -497,7 +498,7 @@ class ApiProvider extends ChangeNotifier {
       log(e.response?.data.toString() ?? e.response.toString());
       notifyListeners();
       SnackBarService.instance
-          .showSnackBarError('Error : ${resBody['message']}');
+          .showSnackBarError('ERR : No $circularType found');
     } catch (e) {
       status = ApiStatus.failed;
       notifyListeners();

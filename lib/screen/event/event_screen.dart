@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/main.dart';
@@ -122,6 +124,14 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   getBody(BuildContext context) {
+    if (_api.status == ApiStatus.failed) {
+      return Center(
+        child: Text(
+          'No Event found',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      );
+    }
     return ListView.builder(
       itemCount: circularList.length,
       itemBuilder: (context, index) {

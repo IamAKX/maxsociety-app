@@ -4,6 +4,12 @@ import 'package:maxsociety/screen/society/society_rule_detail.dart';
 import 'package:maxsociety/util/colors.dart';
 import 'package:maxsociety/util/messages.dart';
 import 'package:maxsociety/widget/heading.dart';
+import 'package:provider/provider.dart';
+
+import '../../model/circular_model.dart';
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
+import '../../util/enums.dart';
 
 class SocietyRuleScreen extends StatefulWidget {
   const SocietyRuleScreen({super.key});
@@ -14,8 +20,31 @@ class SocietyRuleScreen extends StatefulWidget {
 }
 
 class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
+  late ApiProvider _api;
+  List<CircularModel> circularList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadCirculars(),
+    );
+  }
+
+  loadCirculars() async {
+    _api
+        .getCircularsByCircularType(CircularType.SOCIETY_RULE.name)
+        .then((value) {
+      setState(() {
+        circularList = value.data ?? [];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'Society Rules'),
@@ -37,6 +66,14 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
   }
 
   getBody(BuildContext context) {
+    if (_api.status == ApiStatus.failed) {
+      return Center(
+        child: Text(
+          'No Society Rule found',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      );
+    }
     return ListView.separated(
         itemBuilder: (context, index) {
           return ListTile(
@@ -45,11 +82,11 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
               child: Text('${index + 1}'),
             ),
             title: Text(
-              loremIpsumText,
+              circularList.elementAt(index).subject ?? '',
               maxLines: 2,
             ),
             subtitle: Text(
-              'Effected from $index Feb, 2023',
+              'Effected from ${circularList.elementAt(index).eventDate}',
               maxLines: 2,
             ),
             trailing: const Icon(Icons.chevron_right),
@@ -65,6 +102,6 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
             color: dividerColor,
           );
         },
-        itemCount: 10);
+        itemCount: circularList.length);
   }
 }
