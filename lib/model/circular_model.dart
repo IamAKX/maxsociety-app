@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:maxsociety/model/circular_image_model.dart';
+import 'package:maxsociety/model/user_profile_model.dart';
 
 class CircularModel {
   int? circularId;
@@ -10,9 +11,9 @@ class CircularModel {
   String? subject;
   String? circularText;
   String? fileType;
-  String? createdBy;
+  UserProfile? createdBy;
   String? createdOn;
-  String? updatedBy;
+  UserProfile? updatedBy;
   String? updatedOn;
   String? circularType;
   String? circularStatus;
@@ -46,9 +47,9 @@ class CircularModel {
     String? subject,
     String? circularText,
     String? fileType,
-    String? createdBy,
+    UserProfile? createdBy,
     String? createdOn,
-    String? updatedBy,
+    UserProfile? updatedBy,
     String? updatedOn,
     String? circularType,
     String? circularStatus,
@@ -85,9 +86,9 @@ class CircularModel {
       'subject': subject,
       'circularText': circularText,
       'fileType': fileType,
-      'createdBy': createdBy,
+      'createdBy': createdBy?.toMap(),
       'createdOn': createdOn,
-      'updatedBy': updatedBy,
+      'updatedBy': updatedBy?.toMap(),
       'updatedOn': updatedOn,
       'circularType': circularType,
       'circularStatus': circularStatus,
@@ -106,9 +107,13 @@ class CircularModel {
       subject: map['subject'],
       circularText: map['circularText'],
       fileType: map['fileType'],
-      createdBy: map['createdBy'],
+      createdBy: map['createdBy'] != null
+          ? UserProfile.fromMap(map['createdBy'])
+          : null,
       createdOn: map['createdOn'],
-      updatedBy: map['updatedBy'],
+      updatedBy: map['updatedBy'] != null
+          ? UserProfile.fromMap(map['updatedBy'])
+          : null,
       updatedOn: map['updatedOn'],
       circularType: map['circularType'],
       circularStatus: map['circularStatus'],

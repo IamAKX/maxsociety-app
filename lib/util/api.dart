@@ -13,6 +13,8 @@ class Api {
       '${baseUrl}maxsociety/circulars/society/';
   static const String createCirculars = '${baseUrl}maxsociety/circulars';
   static const String updateCirculars = '${baseUrl}maxsociety/circulars';
+  static const String getCircularsByCircularType =
+      '${baseUrl}maxsociety/circulars/type/';
 
   // flat
   static const String getFlats = '${baseUrl}maxsociety/flats';

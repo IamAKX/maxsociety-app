@@ -38,7 +38,6 @@ class _SocietyScreenState extends State<SocietyScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => loadSociety(),

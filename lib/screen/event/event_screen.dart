@@ -1,12 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/main.dart';
+import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/event/create_event.dart';
 import 'package:maxsociety/util/colors.dart';
+import 'package:maxsociety/util/enums.dart';
 import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/widget/actionbar_popup_menu.dart';
+import 'package:provider/provider.dart';
 
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
 import '../../util/theme.dart';
 import 'event_with_image.dart';
 import 'event_without_image.dart';
@@ -21,9 +26,29 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   UserProfile userProfile =
       UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
+  late ApiProvider _api;
+  List<CircularModel> circularList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadCirculars(),
+    );
+  }
+
+  loadCirculars() async {
+    _api.getCircularsByCircularType(CircularType.CIRCULAR.name).then((value) {
+      setState(() {
+        circularList = value.data ?? [];
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -98,15 +123,15 @@ class _EventScreenState extends State<EventScreen> {
 
   getBody(BuildContext context) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: circularList.length,
       itemBuilder: (context, index) {
-        if (index % 3 != 0) {
+        if (circularList.elementAt(index).circularImages?.isNotEmpty ?? false) {
           return EventWithImage(
-            index: index,
+            circular: circularList.elementAt(index),
           );
         } else {
           return EventWithoutImage(
-            index: index,
+            circular: circularList.elementAt(index),
           );
         }
       },
