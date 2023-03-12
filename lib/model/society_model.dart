@@ -1,25 +1,29 @@
 import 'dart:convert';
 
 import 'package:maxsociety/model/society_address_model.dart';
+import 'package:maxsociety/model/society_detail_model.dart';
 
 class SocietyModel {
   int? societyCode;
-  SocietyModel? societyDetails;
+  SocietyDetailModel? societyDetails;
   SocietyAddressModel? address;
   String? phoneNo;
   SocietyModel({
     this.societyCode,
+    this.societyDetails,
     this.address,
     this.phoneNo,
   });
 
   SocietyModel copyWith({
     int? societyCode,
+    SocietyDetailModel? societyDetails,
     SocietyAddressModel? address,
     String? phoneNo,
   }) {
     return SocietyModel(
       societyCode: societyCode ?? this.societyCode,
+      societyDetails: societyDetails ?? this.societyDetails,
       address: address ?? this.address,
       phoneNo: phoneNo ?? this.phoneNo,
     );
@@ -28,6 +32,7 @@ class SocietyModel {
   Map<String, dynamic> toMap() {
     return {
       'societyCode': societyCode,
+      'societyDetails': societyDetails?.toMap(),
       'address': address?.toMap(),
       'phoneNo': phoneNo,
     };
@@ -36,6 +41,9 @@ class SocietyModel {
   factory SocietyModel.fromMap(Map<String, dynamic> map) {
     return SocietyModel(
       societyCode: map['societyCode']?.toInt(),
+      societyDetails: map['societyDetails'] != null
+          ? SocietyDetailModel.fromMap(map['societyDetails'])
+          : null,
       address: map['address'] != null
           ? SocietyAddressModel.fromMap(map['address'])
           : null,
@@ -49,8 +57,9 @@ class SocietyModel {
       SocietyModel.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'SocietyModel(societyCode: $societyCode, address: $address, phoneNo: $phoneNo)';
+  String toString() {
+    return 'SocietyModel(societyCode: $societyCode, societyDetails: $societyDetails, address: $address, phoneNo: $phoneNo)';
+  }
 
   @override
   bool operator ==(Object other) {
@@ -58,11 +67,16 @@ class SocietyModel {
 
     return other is SocietyModel &&
         other.societyCode == societyCode &&
+        other.societyDetails == societyDetails &&
         other.address == address &&
         other.phoneNo == phoneNo;
   }
 
   @override
-  int get hashCode =>
-      societyCode.hashCode ^ address.hashCode ^ phoneNo.hashCode;
+  int get hashCode {
+    return societyCode.hashCode ^
+        societyDetails.hashCode ^
+        address.hashCode ^
+        phoneNo.hashCode;
+  }
 }

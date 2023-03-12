@@ -29,4 +29,8 @@ class Api {
       '${baseUrl}maxsociety/vehicles/flat/';
   static const String createVehicles = '${baseUrl}maxsociety/vehicles';
   static const String updateVehicles = '${baseUrl}maxsociety/vehicles/';
+
+  // society
+  static const String getSociety = '${baseUrl}maxsociety/society/1';
+  static const String updateSociety = '${baseUrl}maxsociety/society/';
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/appintro/app_intro_screen.dart';
 import 'package:maxsociety/service/api_service.dart';
@@ -26,9 +27,13 @@ Future<void> main() async {
   if (prefs.containsKey(PreferenceKey.user)) {
     UserProfile userProfile =
         UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
-    UserProfile user = await ApiProvider.instance.getUserById(userProfile.userId!);
+    UserProfile user =
+        await ApiProvider.instance.getUserById(userProfile.userId!);
     prefs.setString(PreferenceKey.user, user.toJson());
   }
+  SocietyModel societyModel = await ApiProvider.instance.getSociety();
+  prefs.setString(PreferenceKey.society, societyModel.toJson());
+
   runApp(const MyApp());
 }
 

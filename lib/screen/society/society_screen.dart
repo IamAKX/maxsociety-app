@@ -1,4 +1,10 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:maxsociety/main.dart';
+import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/screen/society/about_society.dart';
 import 'package:maxsociety/screen/admin_controls/admin_controls_screen.dart';
 import 'package:maxsociety/screen/society/emergency_contact.dart';
@@ -7,8 +13,16 @@ import 'package:maxsociety/screen/society/mom_screen.dart';
 import 'package:maxsociety/screen/society/society_menu_model.dart';
 import 'package:maxsociety/screen/society/society_rule_screen.dart';
 import 'package:maxsociety/util/colors.dart';
+import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/heading.dart';
+import 'package:provider/provider.dart';
+
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
+import '../../service/storage_service.dart';
+import '../../util/enums.dart';
+import '../../util/helper_methods.dart';
 
 class SocietyScreen extends StatefulWidget {
   const SocietyScreen({super.key});
@@ -18,8 +32,30 @@ class SocietyScreen extends StatefulWidget {
 }
 
 class _SocietyScreenState extends State<SocietyScreen> {
+  bool isImageUploading = false;
+  late ApiProvider _api;
+  SocietyModel? societyModel;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadSociety(),
+    );
+  }
+
+  loadSociety() {
+    societyModel =
+        SocietyModel.fromJson(prefs.getString(PreferenceKey.society) ?? '');
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
+
     return Scaffold(
       body: Column(
         mainAxisSize: MainAxisSize.max,
@@ -33,14 +69,28 @@ class _SocietyScreenState extends State<SocietyScreen> {
                 Container(
                   decoration: const BoxDecoration(
                     color: Colors.transparent,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage(
-                        'assets/banner/login_banner.jpeg',
-                      ),
-                    ),
+                    // image: DecorationImage(
+                    //   fit: BoxFit.cover,
+                    //   image: AssetImage(
+                    //     'assets/banner/login_banner.jpeg',
+                    //   ),
+                    // ),
                   ),
                   height: 230.0,
+                  child: CachedNetworkImage(
+                    imageUrl: societyModel?.societyDetails?.imagePath ?? '',
+                    width: double.infinity,
+                    height: 230.0,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => Image.asset(
+                      'assets/banner/login_banner.jpeg',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      height: 230.0,
+                    ),
+                  ),
                 ),
                 Container(
                   height: 240.0,
@@ -56,11 +106,60 @@ class _SocietyScreenState extends State<SocietyScreen> {
                       stops: [0.0, 1.0],
                     ),
                   ),
+                ),
+                Positioned(
+                  bottom: defaultPadding,
+                  right: 2,
+                  child: IconButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        File imageFile = File(image.path);
+                        SnackBarService.instance
+                            .showSnackBarInfo('Uploading file, please wait');
+                        setState(() {
+                          isImageUploading = true;
+                        });
+                        String imageUrl = await StorageService.uploadEventImage(
+                          imageFile,
+                          getFileName(imageFile),
+                          StorageFolders.societyBanner.name,
+                        );
+
+                        setState(() {
+                          isImageUploading = false;
+                        });
+                        societyModel?.societyDetails?.imagePath = imageUrl;
+                        await _api.updateSociety(societyModel!).then((value) {
+                          if (value) {
+                            societyModel?.societyDetails?.imagePath = imageUrl;
+                            prefs.setString(PreferenceKey.society,
+                                societyModel?.toJson() ?? '');
+                            loadSociety();
+                          }
+                        });
+                      }
+                    },
+                    icon: isImageUploading || _api.status == ApiStatus.loading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Icon(
+                            Icons.add_photo_alternate,
+                            color: textColorDark,
+                            size: 30,
+                          ),
+                  ),
                 )
               ],
             ),
           ),
-          Heading(title: 'Welcome to MaxSociety'),
+          Heading(
+              title: 'Welcome to ${societyModel?.societyDetails?.societyName}'),
           Expanded(
             child: Container(
               child: getBody(context),

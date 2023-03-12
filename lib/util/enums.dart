@@ -19,5 +19,7 @@ enum StorageFolders {
   societyImage,
   galleryImage,
   galleryVideo,
-  vehicle
+  vehicle,
+  societyBanner
+
 }

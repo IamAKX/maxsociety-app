@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/util/colors.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/heading.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
 
 class AboutSocietyScreen extends StatefulWidget {
   const AboutSocietyScreen({super.key});
@@ -12,8 +19,28 @@ class AboutSocietyScreen extends StatefulWidget {
 }
 
 class _AboutSocietyScreenState extends State<AboutSocietyScreen> {
+  late ApiProvider _api;
+  SocietyModel? societyModel;
+  String address = '';
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadSocietData(),
+    );
+  }
+
+  loadSocietData() async {
+    societyModel = await _api.getSociety();
+    address =
+        '${societyModel?.societyDetails?.societyName},\n${societyModel?.address?.addressLine1},\n${societyModel?.address?.addressLine2},\n${societyModel?.address?.city},${societyModel?.address?.state} - ${societyModel?.address?.zipCode}';
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'About Society'),
@@ -49,7 +76,11 @@ class _AboutSocietyScreenState extends State<AboutSocietyScreen> {
                         ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      await Clipboard.setData(ClipboardData(text: address))
+                          .then((value) => SnackBarService.instance
+                              .showSnackBarSuccess('Address copied'));
+                    },
                     child: const Icon(
                       Icons.copy,
                       size: 20,
@@ -62,7 +93,7 @@ class _AboutSocietyScreenState extends State<AboutSocietyScreen> {
                 height: defaultPadding / 2,
               ),
               Text(
-                'Max  Society,\nStreet, Normad lane,Andheri East,\nMumbai, Maharastra - 100001',
+                address,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ],
@@ -93,7 +124,10 @@ class _AboutSocietyScreenState extends State<AboutSocietyScreen> {
                         ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      launchUrl(
+                          Uri.parse('tel:${societyModel?.phoneNo ?? ''}'));
+                    },
                     child: const Icon(
                       Icons.call_outlined,
                       size: 20,
@@ -105,10 +139,12 @@ class _AboutSocietyScreenState extends State<AboutSocietyScreen> {
               const SizedBox(
                 height: defaultPadding / 2,
               ),
-              detailRow(context, 'Registration Date', '27 Aug, 1994'),
-              detailRow(context, 'Rera Reg. No.', '106HF51N'),
-              detailRow(context, 'Soceity Registration Number', '53628192'),
-              detailRow(context, 'Ward No.', '15'),
+              detailRow(context, 'Rera Reg. No.',
+                  '${societyModel?.societyDetails?.reraRegNo}'),
+              detailRow(context, 'Soceity Registration Number',
+                  '${societyModel?.societyDetails?.societyRegNo}'),
+              detailRow(context, 'Ward No.',
+                  '${societyModel?.societyDetails?.wardNo}'),
             ],
           ),
         ),
