@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/model/flat_model.dart';
+import 'package:maxsociety/model/list/user_list_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/model/vehicle_model.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
@@ -343,5 +344,64 @@ class ApiProvider extends ChangeNotifier {
       log(e.toString());
     }
     return vehicleList;
+  }
+
+  Future<UserListModel> getMembersByFlatNo(String flatNo) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late UserListModel userList;
+    try {
+      Response response = await _dio.get(
+        '${Api.getMembersByFlatNo}$flatNo',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        userList = UserListModel.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return userList;
+  }
+
+   Future<bool> deleteUser(String userId) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.delete(
+        '${Api.updateUser}$userId',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 204) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess('User is deleted');
+        return true;
+      }
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
   }
 }
