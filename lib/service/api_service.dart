@@ -4,8 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
+import 'package:maxsociety/model/vehicle_model.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
 import 'package:maxsociety/util/api.dart';
+
+import '../model/list/vehicle_list_model.dart';
 
 enum ApiStatus { ideal, loading, success, failed }
 
@@ -33,6 +36,40 @@ class ApiProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         status = ApiStatus.success;
         notifyListeners();
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> updateUser(UserProfile userProfile) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.put(
+        Api.updateUser,
+        data: userProfile.toJson(),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess('Profile updated');
         return true;
       }
     } on DioError catch (e) {
@@ -138,17 +175,173 @@ class ApiProvider extends ChangeNotifier {
       }
     } on DioError catch (e) {
       status = ApiStatus.failed;
-      var resBody = e.response?.data ?? {};
       log(e.response?.data.toString() ?? e.response.toString());
       notifyListeners();
-      // SnackBarService.instance
-      //     .showSnackBarError('Error : ${resBody['message']}');
     } catch (e) {
       status = ApiStatus.failed;
       notifyListeners();
-      // SnackBarService.instance.showSnackBarError(e.toString());
       log(e.toString());
     }
     return flatModel;
+  }
+
+  Future<bool> addVehicle(VehicleModel vehicle) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.post(
+        Api.createVehicles,
+        data: vehicle.toJson(),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess(response.data['message']);
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> updateVehicle(VehicleModel vehicle) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.put(
+        Api.updateVehicles,
+        data: vehicle.toJson(),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess(response.data['message']);
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> deleteVehicle(String vehicleNo) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.delete(
+        '${Api.getVehicleByVehicleNo}$vehicleNo',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 204) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess('Vehicle is deleted');
+        return true;
+      }
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<VehicleModel> getVehicleByVehicleNo(String vehicleNumber) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late VehicleModel vehicleModel;
+    try {
+      Response response = await _dio.get(
+        '${Api.getVehicleByVehicleNo}$vehicleNumber',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        vehicleModel = VehicleModel.fromMap(response.data['data']);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return vehicleModel;
+  }
+
+  Future<VehicleModelList> getVehiclesByFlatNo(String flatNo) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late VehicleModelList vehicleList;
+    try {
+      Response response = await _dio.get(
+        '${Api.getVehiclesByFlatNo}$flatNo',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        vehicleList = VehicleModelList.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return vehicleList;
   }
 }

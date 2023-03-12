@@ -5,7 +5,7 @@ class Api {
   static const String getAllUsers = '${baseUrl}maxsociety/users/';
   static const String getUserByUserId = '${baseUrl}maxsociety/users/';
   static const String createUser = '${baseUrl}maxsociety/users/';
-  static const String updateUser = '${baseUrl}maxsociety/users/user';
+  static const String updateUser = '${baseUrl}maxsociety/users/';
 
   // circular
   static const String getCirculars = '${baseUrl}maxsociety/circulars';
@@ -21,4 +21,12 @@ class Api {
   static const String getFlatByFlatNo = '${baseUrl}maxsociety/flats/';
   static const String createFlat = '${baseUrl}maxsociety/flats';
   static const String updateFlat = '${baseUrl}maxsociety/flats';
+
+  // vehicle
+  static const String getVehicles = '${baseUrl}maxsociety/vehicles';
+  static const String getVehicleByVehicleNo = '${baseUrl}maxsociety/vehicles/';
+  static const String getVehiclesByFlatNo =
+      '${baseUrl}maxsociety/vehicles/flat/';
+  static const String createVehicles = '${baseUrl}maxsociety/vehicles';
+  static const String updateVehicles = '${baseUrl}maxsociety/vehicles/';
 }

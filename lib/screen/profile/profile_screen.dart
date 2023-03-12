@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,7 +17,9 @@ import 'package:maxsociety/util/colors.dart';
 import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/heading.dart';
+import 'package:provider/provider.dart';
 
+import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
 import '../../service/storage_service.dart';
 import '../../util/enums.dart';
@@ -29,10 +33,29 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late UserProfile userProfile;
+  UserProfile? userProfile;
+  bool isImageUploading = false;
+  late ApiProvider _api;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadUser(),
+    );
+  }
+
+  loadUser() {
+    userProfile =
+        UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     userProfile =
         UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
     return Scaffold(
@@ -72,30 +95,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(defaultPadding),
-                    child: Image.asset(
-                      'assets/image/user.png',
+                    child: CachedNetworkImage(
+                      imageUrl: userProfile?.imagePath ?? '',
                       width: 120,
                       height: 120,
                       fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/image/user_square.jpg',
+                        width: 120,
+                        height: 120,
+                      ),
                     ),
                   ),
                   TextButton(
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        File imageFile = File(image.path);
-                        SnackBarService.instance
-                            .showSnackBarInfo('Uploading file, please wait');
-                        String imageUrl = await StorageService.uploadEventImage(
-                          imageFile,
-                          getFileName(imageFile),
-                          StorageFolders.profileImage.name,
-                        );
-                      }
-                    },
-                    child: const Text('Edit Picture'),
+                    onPressed:
+                        isImageUploading || _api.status == ApiStatus.loading
+                            ? null
+                            : () async {
+                                final ImagePicker picker = ImagePicker();
+                                final XFile? image = await picker.pickImage(
+                                    source: ImageSource.gallery);
+                                if (image != null) {
+                                  File imageFile = File(image.path);
+                                  SnackBarService.instance.showSnackBarInfo(
+                                      'Uploading file, please wait');
+                                  setState(() {
+                                    isImageUploading = true;
+                                  });
+                                  String imageUrl =
+                                      await StorageService.uploadEventImage(
+                                    imageFile,
+                                    getFileName(imageFile),
+                                    StorageFolders.profileImage.name,
+                                  );
+
+                                  setState(() {
+                                    isImageUploading = false;
+                                  });
+                                  userProfile?.imagePath = imageUrl;
+                                  _api.updateUser(userProfile!).then((value) {
+                                    log('value : ${value.toString()}');
+                                    log('status : ${_api.status.toString()}');
+                                    userProfile?.imagePath = imageUrl;
+
+                                    prefs.setString(PreferenceKey.user,
+                                        userProfile?.toJson() ?? '');
+                                    log(prefs.getString(PreferenceKey.user)!);
+                                    loadUser();
+                                  });
+                                }
+                              },
+                    child: isImageUploading || _api.status == ApiStatus.loading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Text('Edit Picture'),
                   )
                 ],
               ),
@@ -108,18 +166,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      userProfile.userName ?? '',
+                      userProfile?.userName ?? '',
                       style:
                           Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                     ),
                     Text(
-                      userProfile.email ?? '',
+                      userProfile?.email ?? '',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(
-                      '${userProfile.flats?.tower ?? ''}   •   Flat ${userProfile.flats?.flatNo ?? ''}',
+                      '${userProfile?.flats?.tower ?? ''}   •   Flat ${userProfile?.flats?.flatNo ?? ''}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(

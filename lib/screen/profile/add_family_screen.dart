@@ -38,6 +38,8 @@ class _AddFamilyMemberScreenState extends State<AddFamilyMemberScreen> {
   String _gender = genderList.first;
   String _relationship = relationshipList.first;
   bool isImageSelected = false;
+  bool isImageUploading = false;
+
   File? imageFile;
   UserProfile userProfile =
       UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
@@ -284,11 +286,17 @@ class _AddFamilyMemberScreenState extends State<AddFamilyMemberScreen> {
             if (imageFile != null) {
               SnackBarService.instance
                   .showSnackBarInfo('Uploading file, please wait');
+              setState(() {
+                isImageUploading = true;
+              });
               imageUrl = await StorageService.uploadEventImage(
                 imageFile!,
                 getFileName(imageFile),
                 StorageFolders.profileImage.name,
               );
+               setState(() {
+                isImageUploading = false;
+              });
             }
             UserProfile newUser = UserProfile(
               userId:
@@ -315,7 +323,7 @@ class _AddFamilyMemberScreenState extends State<AddFamilyMemberScreen> {
           label: _api.status == ApiStatus.loading
               ? 'Please wait...'
               : 'Add Family Member',
-          isDisabled: _api.status == ApiStatus.loading,
+          isDisabled: _api.status == ApiStatus.loading|| isImageUploading,
         ),
       ],
     );

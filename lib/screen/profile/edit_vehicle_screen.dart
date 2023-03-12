@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:group_radio_button/group_radio_button.dart';
@@ -22,19 +23,21 @@ import '../../util/enums.dart';
 import '../../util/helper_methods.dart';
 import '../../util/preference_key.dart';
 
-class AddVehicleScreen extends StatefulWidget {
-  const AddVehicleScreen({super.key});
-  static const String routePath = '/addVehicleScreen';
+class EditVehicleScreen extends StatefulWidget {
+  const EditVehicleScreen({super.key, required this.vehicleNumber});
+  static const String routePath = '/editVehicleScreen';
+  final String vehicleNumber;
 
   @override
-  State<AddVehicleScreen> createState() => _AddVehicleScreenState();
+  State<EditVehicleScreen> createState() => _EditVehicleScreenState();
 }
 
-class _AddVehicleScreenState extends State<AddVehicleScreen> {
+class _EditVehicleScreenState extends State<EditVehicleScreen> {
   final TextEditingController _brandCtrl = TextEditingController();
   final TextEditingController _modelCtrl = TextEditingController();
   final TextEditingController _regNoCtrl = TextEditingController();
   String _vehicleType = vehicleTypeList.first;
+  VehicleModel? vehicle;
 
   bool isImageSelected = false;
   bool isImageUploading = false;
@@ -45,13 +48,33 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   late ApiProvider _api;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadVehicleData(),
+    );
+  }
+
+  loadVehicleData() async {
+    _api.getVehicleByVehicleNo(widget.vehicleNumber).then((value) {
+      setState(() {
+        vehicle = value;
+        _brandCtrl.text = vehicle?.brand ?? '';
+        _modelCtrl.text = vehicle?.model ?? '';
+        _regNoCtrl.text = vehicle?.vehicleNo ?? '';
+        _vehicleType = vehicle?.vehicleType ?? '';
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
     _api = Provider.of<ApiProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Heading(title: 'Add Vehicle'),
+        title: Heading(title: 'Edit Vehicle'),
       ),
       body: getBody(context),
     );
@@ -85,6 +108,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           hint: 'Registration number',
           controller: _regNoCtrl,
           keyboardType: TextInputType.name,
+          enabled: false,
           obscure: false,
           icon: Icons.sort_by_alpha_rounded,
         ),
@@ -131,25 +155,43 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             ),
           ),
           child: !isImageSelected
-              ? InkWell(
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: double.infinity,
-                    height: 200,
-                    child: const Text('Select image'),
-                  ),
-                  onTap: () async {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      imageFile = File(image.path);
+              ? Stack(
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: vehicle?.image ?? '',
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.fitWidth,
+                      placeholder: (context, url) =>
+                          const Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/image/car.jpg',
+                        width: double.infinity,
+                        height: 200,
+                      ),
+                    ),
+                    Positioned(
+                      right: 1,
+                      top: 1,
+                      child: IconButton(
+                          onPressed: () async {
+                            final ImagePicker picker = ImagePicker();
+                            final XFile? image = await picker.pickImage(
+                                source: ImageSource.gallery);
+                            if (image != null) {
+                              imageFile = File(image.path);
 
-                      setState(() {
-                        isImageSelected = true;
-                      });
-                    }
-                  },
+                              setState(() {
+                                isImageSelected = true;
+                              });
+                            }
+                          },
+                          icon: const Icon(
+                            FontAwesomeIcons.penToSquare,
+                            color: Colors.blue,
+                          )),
+                    )
+                  ],
                 )
               : Stack(
                   children: [
@@ -189,7 +231,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   .showSnackBarError('All fields are mandatory');
               return;
             }
-            String imageUrl = '';
+            String imageUrl = vehicle?.image ?? '';
             if (imageFile != null) {
               SnackBarService.instance
                   .showSnackBarInfo('Uploading file, please wait');
@@ -201,19 +243,19 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 getFileName(imageFile),
                 StorageFolders.vehicle.name,
               );
-               setState(() {
+              setState(() {
                 isImageUploading = false;
               });
             }
             VehicleModel newVehicle = VehicleModel(
                 brand: _brandCtrl.text,
                 model: _modelCtrl.text,
-                vehicleNo: _regNoCtrl.text,
+                vehicleNo: vehicle?.vehicleNo,
                 vehicleType: _vehicleType,
                 flats: userProfile.flats,
                 image: imageUrl);
 
-            await _api.addVehicle(newVehicle).then((value) {
+            await _api.updateVehicle(newVehicle).then((value) {
               if (_api.status == ApiStatus.success && value) {
                 Navigator.of(context).pop();
               }
@@ -221,7 +263,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           },
           label: _api.status == ApiStatus.loading
               ? 'Please wait...'
-              : 'Add Vehicle',
+              : 'Update Vehicle',
           isDisabled: _api.status == ApiStatus.loading|| isImageUploading,
         ),
       ],

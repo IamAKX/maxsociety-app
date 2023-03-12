@@ -16,6 +16,7 @@ import 'package:maxsociety/screen/forgot_password/forgot_password_screen.dart';
 import 'package:maxsociety/screen/login/login_screen.dart';
 import 'package:maxsociety/screen/profile/add_family_screen.dart';
 import 'package:maxsociety/screen/profile/add_vehicle_screen.dart';
+import 'package:maxsociety/screen/profile/edit_vehicle_screen.dart';
 import 'package:maxsociety/screen/profile/family_screen.dart';
 import 'package:maxsociety/screen/profile/profile_detail_update.dart';
 import 'package:maxsociety/screen/profile/vehicle_screen.dart';
@@ -125,6 +126,12 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const CreateRuleScreen());
       case CreateMomScreen.routePath:
         return MaterialPageRoute(builder: (_) => const CreateMomScreen());
+      case EditVehicleScreen.routePath:
+        return MaterialPageRoute(
+          builder: (_) => EditVehicleScreen(
+            vehicleNumber: settings.arguments as String,
+          ),
+        );
       default:
         return errorRoute();
     }

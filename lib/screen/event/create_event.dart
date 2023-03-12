@@ -34,6 +34,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final TextEditingController _descCtrl = TextEditingController();
   bool showDateOnPost = false;
   bool isImageSelected = false;
+    bool isImageUploading = false;
+
   File? imageFile;
   String eventDate = '';
   UserProfile userProfile =
@@ -234,11 +236,17 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             if (imageFile != null) {
               SnackBarService.instance
                   .showSnackBarInfo('Uploading file, please wait');
+                   setState(() {
+                isImageUploading = true;
+              });
               imageUrl = await StorageService.uploadEventImage(
                 imageFile!,
                 getFileName(imageFile),
                 StorageFolders.events.name,
               );
+               setState(() {
+                isImageUploading = false;
+              });
             }
             var createCircularReqBody = {
               'subject': '',
@@ -267,7 +275,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             });
           },
           label: _api.status == ApiStatus.loading ? 'Please wait...' : 'Create',
-          isDisabled: _api.status == ApiStatus.loading,
+          isDisabled: _api.status == ApiStatus.loading || isImageUploading,
         )
       ],
     );

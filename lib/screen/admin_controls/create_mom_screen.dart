@@ -32,6 +32,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
   final TextEditingController _descCtrl = TextEditingController();
   String meetingDate = '';
   bool isImageSelected = false;
+  bool isImageUploading = false;
   File? imageFile;
   UserProfile userProfile =
       UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
@@ -201,11 +202,17 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
             if (imageFile != null) {
               SnackBarService.instance
                   .showSnackBarInfo('Uploading file, please wait');
+              setState(() {
+                isImageUploading = true;
+              });
               imageUrl = await StorageService.uploadEventImage(
                 imageFile!,
                 getFileName(imageFile),
                 StorageFolders.mom.name,
               );
+              setState(() {
+                isImageUploading = false;
+              });
             }
             var createCircularReqBody = {
               'subject': _titleCtrl.text,
@@ -229,7 +236,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
             });
           },
           label: _api.status == ApiStatus.loading ? 'Please wait...' : 'Create',
-          isDisabled: _api.status == ApiStatus.loading,
+          isDisabled: _api.status == ApiStatus.loading || isImageUploading,
         )
       ],
     );
