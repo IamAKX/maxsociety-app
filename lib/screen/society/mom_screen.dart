@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:maxsociety/screen/admin_controls/create_mom_screen.dart';
 import 'package:maxsociety/screen/society/mom_details.dart';
 import 'package:maxsociety/widget/heading.dart';
+import 'package:provider/provider.dart';
 
+import '../../model/circular_model.dart';
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
 import '../../util/colors.dart';
+import '../../util/enums.dart';
 import '../../util/messages.dart';
 
 class MomScreen extends StatefulWidget {
@@ -15,8 +20,29 @@ class MomScreen extends StatefulWidget {
 }
 
 class _MomScreenState extends State<MomScreen> {
+  late ApiProvider _api;
+  List<CircularModel> circularList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadCirculars(),
+    );
+  }
+
+  loadCirculars() async {
+    _api.getCircularsByCircularType(CircularType.MOM.name).then((value) {
+      setState(() {
+        circularList = value.data ?? [];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Heading(
@@ -41,6 +67,14 @@ class _MomScreenState extends State<MomScreen> {
   }
 
   getBody(BuildContext context) {
+    if (_api.status == ApiStatus.failed) {
+      return Center(
+        child: Text(
+          'No MOM found',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      );
+    }
     return ListView.separated(
         itemBuilder: (context, index) {
           return ListTile(
@@ -49,11 +83,11 @@ class _MomScreenState extends State<MomScreen> {
               child: Text('${index + 1}'),
             ),
             title: Text(
-              loremIpsumText,
+              circularList.elementAt(index).subject ?? '',
               maxLines: 2,
             ),
             subtitle: Text(
-              'Held on $index Feb, 2023',
+              'Held on ${circularList.elementAt(index).eventDate}',
               maxLines: 2,
             ),
             trailing: const Icon(Icons.chevron_right),
@@ -68,6 +102,6 @@ class _MomScreenState extends State<MomScreen> {
             color: dividerColor,
           );
         },
-        itemCount: 10);
+        itemCount: circularList.length);
   }
 }
