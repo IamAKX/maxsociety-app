@@ -210,7 +210,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 model: _modelCtrl.text,
                 vehicleNo: _regNoCtrl.text,
                 vehicleType: _vehicleType,
-                flats: userProfile.flats,
+                flats: userProfile.flats?.flatNo,
                 image: imageUrl);
 
             await _api.addVehicle(newVehicle).then((value) {

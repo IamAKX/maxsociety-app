@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
+import 'package:maxsociety/model/vehicle_model.dart';
+
 class FlatModel {
   int? floor;
   String? wing;
@@ -7,6 +11,7 @@ class FlatModel {
   String? buitlUpArea;
   String? carpetArea;
   String? flatNo;
+  List<VehicleModel>? vehicles;
   FlatModel({
     this.floor,
     this.wing,
@@ -14,6 +19,7 @@ class FlatModel {
     this.buitlUpArea,
     this.carpetArea,
     this.flatNo,
+    this.vehicles,
   });
 
   FlatModel copyWith({
@@ -23,6 +29,7 @@ class FlatModel {
     String? buitlUpArea,
     String? carpetArea,
     String? flatNo,
+    List<VehicleModel>? vehicles,
   }) {
     return FlatModel(
       floor: floor ?? this.floor,
@@ -31,6 +38,7 @@ class FlatModel {
       buitlUpArea: buitlUpArea ?? this.buitlUpArea,
       carpetArea: carpetArea ?? this.carpetArea,
       flatNo: flatNo ?? this.flatNo,
+      vehicles: vehicles ?? this.vehicles,
     );
   }
 
@@ -42,6 +50,7 @@ class FlatModel {
       'buitlUpArea': buitlUpArea,
       'carpetArea': carpetArea,
       'flatNo': flatNo,
+      'vehicles': vehicles?.map((x) => x?.toMap())?.toList(),
     };
   }
 
@@ -53,6 +62,7 @@ class FlatModel {
       buitlUpArea: map['buitlUpArea'],
       carpetArea: map['carpetArea'],
       flatNo: map['flatNo'],
+      vehicles: map['vehicles'] != null ? List<VehicleModel>.from(map['vehicles']?.map((x) => VehicleModel.fromMap(x))) : null,
     );
   }
 
@@ -62,7 +72,7 @@ class FlatModel {
 
   @override
   String toString() {
-    return 'FlatModel(floor: $floor, wing: $wing, tower: $tower, buitlUpArea: $buitlUpArea, carpetArea: $carpetArea, flatNo: $flatNo)';
+    return 'FlatModel(floor: $floor, wing: $wing, tower: $tower, buitlUpArea: $buitlUpArea, carpetArea: $carpetArea, flatNo: $flatNo, vehicles: $vehicles)';
   }
 
   @override
@@ -75,7 +85,8 @@ class FlatModel {
       other.tower == tower &&
       other.buitlUpArea == buitlUpArea &&
       other.carpetArea == carpetArea &&
-      other.flatNo == flatNo;
+      other.flatNo == flatNo &&
+      listEquals(other.vehicles, vehicles);
   }
 
   @override
@@ -85,6 +96,7 @@ class FlatModel {
       tower.hashCode ^
       buitlUpArea.hashCode ^
       carpetArea.hashCode ^
-      flatNo.hashCode;
+      flatNo.hashCode ^
+      vehicles.hashCode;
   }
 }

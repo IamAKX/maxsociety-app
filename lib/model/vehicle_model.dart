@@ -8,7 +8,7 @@ class VehicleModel {
   String? brand;
   String? model;
   String? image;
-  FlatModel? flats;
+  String? flats;
   VehicleModel({
     this.vehicleNo,
     this.vehicleType,
@@ -24,7 +24,7 @@ class VehicleModel {
     String? brand,
     String? model,
     String? image,
-    FlatModel? flats,
+    String? flats,
   }) {
     return VehicleModel(
       vehicleNo: vehicleNo ?? this.vehicleNo,
@@ -43,7 +43,7 @@ class VehicleModel {
       'brand': brand,
       'model': model,
       'image': image,
-      'flats': flats?.toMap(),
+      'flats': flats,
     };
   }
 
@@ -54,13 +54,14 @@ class VehicleModel {
       brand: map['brand'],
       model: map['model'],
       image: map['image'],
-      flats: map['flats'] != null ? FlatModel.fromMap(map['flats']) : null,
+      flats: map['flats'],
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory VehicleModel.fromJson(String source) => VehicleModel.fromMap(json.decode(source));
+  factory VehicleModel.fromJson(String source) =>
+      VehicleModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -70,23 +71,23 @@ class VehicleModel {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is VehicleModel &&
-      other.vehicleNo == vehicleNo &&
-      other.vehicleType == vehicleType &&
-      other.brand == brand &&
-      other.model == model &&
-      other.image == image &&
-      other.flats == flats;
+        other.vehicleNo == vehicleNo &&
+        other.vehicleType == vehicleType &&
+        other.brand == brand &&
+        other.model == model &&
+        other.image == image &&
+        other.flats == flats;
   }
 
   @override
   int get hashCode {
     return vehicleNo.hashCode ^
-      vehicleType.hashCode ^
-      brand.hashCode ^
-      model.hashCode ^
-      image.hashCode ^
-      flats.hashCode;
+        vehicleType.hashCode ^
+        brand.hashCode ^
+        model.hashCode ^
+        image.hashCode ^
+        flats.hashCode;
   }
 }

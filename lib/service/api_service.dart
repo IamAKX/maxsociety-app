@@ -111,12 +111,12 @@ class ApiProvider extends ChangeNotifier {
       var resBody = e.response?.data ?? {};
       log(e.response?.data.toString() ?? e.response.toString());
       notifyListeners();
-      SnackBarService.instance
-          .showSnackBarError('Error : ${resBody['message']}');
+      // SnackBarService.instance
+      //     .showSnackBarError('Error : ${resBody['message']}');
     } catch (e) {
       status = ApiStatus.failed;
       notifyListeners();
-      SnackBarService.instance.showSnackBarError(e.toString());
+      // SnackBarService.instance.showSnackBarError(e.toString());
       log(e.toString());
     }
     return userProfile;
@@ -379,7 +379,7 @@ class ApiProvider extends ChangeNotifier {
     return userList;
   }
 
-   Future<bool> deleteUser(String userId) async {
+  Future<bool> deleteUser(String userId) async {
     status = ApiStatus.loading;
     notifyListeners();
     try {

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/user_role.dart';
+import 'package:maxsociety/model/vehicle_model.dart';
 
 class UserProfile {
   String? userId;
@@ -18,6 +19,9 @@ class UserProfile {
   List<UserRole>? roles;
   String? designation;
   String? category;
+  String? createdOn;
+  String? updatedOn;
+  int? familyMembersCount;
   UserProfile({
     this.userId,
     this.userName,
@@ -31,6 +35,9 @@ class UserProfile {
     this.roles,
     this.designation,
     this.category,
+    this.createdOn,
+    this.updatedOn,
+    this.familyMembersCount,
   });
 
   UserProfile copyWith({
@@ -46,6 +53,9 @@ class UserProfile {
     List<UserRole>? roles,
     String? designation,
     String? category,
+    String? createdOn,
+    String? updatedOn,
+    int? familyMembersCount,
   }) {
     return UserProfile(
       userId: userId ?? this.userId,
@@ -60,6 +70,9 @@ class UserProfile {
       roles: roles ?? this.roles,
       designation: designation ?? this.designation,
       category: category ?? this.category,
+      createdOn: createdOn ?? this.createdOn,
+      updatedOn: updatedOn ?? this.updatedOn,
+      familyMembersCount: familyMembersCount ?? this.familyMembersCount,
     );
   }
 
@@ -77,6 +90,9 @@ class UserProfile {
       'roles': roles?.map((x) => x?.toMap())?.toList(),
       'designation': designation,
       'category': category,
+      'createdOn': createdOn,
+      'updatedOn': updatedOn,
+      'familyMembersCount': familyMembersCount,
     };
   }
 
@@ -96,6 +112,9 @@ class UserProfile {
           : null,
       designation: map['designation'],
       category: map['category'],
+      createdOn: map['createdOn'],
+      updatedOn: map['updatedOn'],
+      familyMembersCount: map['familyMembersCount']?.toInt(),
     );
   }
 
@@ -106,7 +125,7 @@ class UserProfile {
 
   @override
   String toString() {
-    return 'UserProfile(userId: $userId, userName: $userName, relationship: $relationship, mobileNo: $mobileNo, gender: $gender, dob: $dob, email: $email, imagePath: $imagePath, flats: $flats, roles: $roles, designation: $designation, category: $category)';
+    return 'UserProfile(userId: $userId, userName: $userName, relationship: $relationship, mobileNo: $mobileNo, gender: $gender, dob: $dob, email: $email, imagePath: $imagePath, flats: $flats, roles: $roles, designation: $designation, category: $category, createdOn: $createdOn, updatedOn: $updatedOn, familyMembersCount: $familyMembersCount)';
   }
 
   @override
@@ -125,7 +144,10 @@ class UserProfile {
         other.flats == flats &&
         listEquals(other.roles, roles) &&
         other.designation == designation &&
-        other.category == category;
+        other.category == category &&
+        other.createdOn == createdOn &&
+        other.updatedOn == updatedOn &&
+        other.familyMembersCount == familyMembersCount;
   }
 
   @override
@@ -141,6 +163,9 @@ class UserProfile {
         flats.hashCode ^
         roles.hashCode ^
         designation.hashCode ^
-        category.hashCode;
+        category.hashCode ^
+        createdOn.hashCode ^
+        updatedOn.hashCode ^
+        familyMembersCount.hashCode;
   }
 }

@@ -252,7 +252,7 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                 model: _modelCtrl.text,
                 vehicleNo: vehicle?.vehicleNo,
                 vehicleType: _vehicleType,
-                flats: userProfile.flats,
+                flats: userProfile.flats?.flatNo,
                 image: imageUrl);
 
             await _api.updateVehicle(newVehicle).then((value) {

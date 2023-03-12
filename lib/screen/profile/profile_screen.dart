@@ -199,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '4',
+                                '${userProfile?.familyMembersCount}',
                                 style:
                                     Theme.of(context).textTheme.headlineSmall,
                               ),
@@ -221,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '2',
+                                '${userProfile?.flats?.vehicles?.length}',
                                 style:
                                     Theme.of(context).textTheme.headlineSmall,
                               ),
