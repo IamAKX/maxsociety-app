@@ -7,6 +7,7 @@ import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/list/circular_list_model.dart';
 import 'package:maxsociety/model/list/flat_list_model.dart';
+import 'package:maxsociety/model/list/gallery_list_model.dart';
 import 'package:maxsociety/model/list/user_list_model.dart';
 import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
@@ -728,5 +729,72 @@ class ApiProvider extends ChangeNotifier {
       log(e.toString());
     }
     return false;
+  }
+
+  Future<bool> createGalleryItem(var reqBody) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.post(
+        Api.createGalleryItem,
+        data: json.encode(reqBody),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess(response.data['message']);
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<GalleryListModel> getGalleryItems() async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late GalleryListModel galleryList;
+    try {
+      Response response = await _dio.get(
+        Api.getGalleryItems,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        galleryList = GalleryListModel.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return galleryList;
   }
 }
