@@ -20,7 +20,8 @@ enum StorageFolders {
   galleryImage,
   galleryVideo,
   vehicle,
-  societyBanner
+  societyBanner,
+  thumbnail
 }
 
 enum GalleryItemType { IMAGE, VIDEO }

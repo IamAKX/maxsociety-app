@@ -8,6 +8,7 @@ class GalleryModel {
   String? galleryItemType;
   String? galleryItemPath;
   int? society;
+  String? thumbnail;
   GalleryModel({
     this.galleryItemId,
     this.galleryItemName,
@@ -16,6 +17,7 @@ class GalleryModel {
     this.galleryItemType,
     this.galleryItemPath,
     this.society,
+    this.thumbnail,
   });
 
   GalleryModel copyWith({
@@ -26,6 +28,7 @@ class GalleryModel {
     String? galleryItemType,
     String? galleryItemPath,
     int? society,
+    String? thumbnail,
   }) {
     return GalleryModel(
       galleryItemId: galleryItemId ?? this.galleryItemId,
@@ -35,6 +38,7 @@ class GalleryModel {
       galleryItemType: galleryItemType ?? this.galleryItemType,
       galleryItemPath: galleryItemPath ?? this.galleryItemPath,
       society: society ?? this.society,
+      thumbnail: thumbnail ?? this.thumbnail,
     );
   }
 
@@ -47,6 +51,7 @@ class GalleryModel {
       'galleryItemType': galleryItemType,
       'galleryItemPath': galleryItemPath,
       'society': society,
+      'thumbnail': thumbnail,
     };
   }
 
@@ -59,6 +64,7 @@ class GalleryModel {
       galleryItemType: map['galleryItemType'],
       galleryItemPath: map['galleryItemPath'],
       society: map['society']?.toInt(),
+      thumbnail: map['thumbnail'],
     );
   }
 
@@ -68,7 +74,7 @@ class GalleryModel {
 
   @override
   String toString() {
-    return 'GalleryModel(galleryItemId: $galleryItemId, galleryItemName: $galleryItemName, createdOn: $createdOn, updatedOn: $updatedOn, galleryItemType: $galleryItemType, galleryItemPath: $galleryItemPath, society: $society)';
+    return 'GalleryModel(galleryItemId: $galleryItemId, galleryItemName: $galleryItemName, createdOn: $createdOn, updatedOn: $updatedOn, galleryItemType: $galleryItemType, galleryItemPath: $galleryItemPath, society: $society, thumbnail: $thumbnail)';
   }
 
   @override
@@ -82,7 +88,8 @@ class GalleryModel {
       other.updatedOn == updatedOn &&
       other.galleryItemType == galleryItemType &&
       other.galleryItemPath == galleryItemPath &&
-      other.society == society;
+      other.society == society &&
+      other.thumbnail == thumbnail;
   }
 
   @override
@@ -93,6 +100,7 @@ class GalleryModel {
       updatedOn.hashCode ^
       galleryItemType.hashCode ^
       galleryItemPath.hashCode ^
-      society.hashCode;
+      society.hashCode ^
+      thumbnail.hashCode;
   }
 }

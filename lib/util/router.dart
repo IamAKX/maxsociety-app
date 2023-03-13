@@ -33,6 +33,7 @@ import 'package:maxsociety/screen/society/society_rule_detail.dart';
 import 'package:maxsociety/widget/image_viewer.dart';
 import 'package:maxsociety/widget/main_container.dart';
 import 'package:maxsociety/widget/pdf_viewer.dart';
+import 'package:maxsociety/widget/video_viewer.dart';
 
 import '../screen/admin_controls/update_flat.dart';
 import '../screen/appintro/app_intro_screen.dart';
@@ -147,6 +148,12 @@ class NavRoute {
         return MaterialPageRoute(
           builder: (_) => ImageViewer(
             imageUrl: settings.arguments as String,
+          ),
+        );
+      case VideoViewer.routePath:
+        return MaterialPageRoute(
+          builder: (_) => VideoViewer(
+            videoUrl: settings.arguments as String,
           ),
         );
       case PDFViewer.routePath:
