@@ -1,5 +1,5 @@
 class Api {
-  static const String baseUrl = 'http://65.0.85.7:80/';
+  static const String baseUrl = 'http://43.205.194.226/';
 
   // users
   static const String getAllUsers = '${baseUrl}maxsociety/users/';
@@ -40,4 +40,9 @@ class Api {
   // society
   static const String getSociety = '${baseUrl}maxsociety/society/1';
   static const String updateSociety = '${baseUrl}maxsociety/society/';
+
+  // gallery
+  static const String createGalleryItem = '${baseUrl}maxsociety/galleryItems/';
+  static const String getGalleryItems = '${baseUrl}maxsociety/galleryItems/';
+  static const String deleteGalleryItem = '${baseUrl}maxsociety/galleryItems/';
 }

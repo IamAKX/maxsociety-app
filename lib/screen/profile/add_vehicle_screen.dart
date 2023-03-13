@@ -201,7 +201,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 getFileName(imageFile),
                 StorageFolders.vehicle.name,
               );
-               setState(() {
+              setState(() {
                 isImageUploading = false;
               });
             }
@@ -222,7 +222,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           label: _api.status == ApiStatus.loading
               ? 'Please wait...'
               : 'Add Vehicle',
-          isDisabled: _api.status == ApiStatus.loading|| isImageUploading,
+          isDisabled: _api.status == ApiStatus.loading || isImageUploading,
         ),
       ],
     );

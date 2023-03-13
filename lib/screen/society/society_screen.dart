@@ -44,9 +44,10 @@ class _SocietyScreenState extends State<SocietyScreen> {
     );
   }
 
-  loadSociety() {
-    societyModel =
-        SocietyModel.fromJson(prefs.getString(PreferenceKey.society) ?? '');
+  loadSociety() async {
+    societyModel = await ApiProvider.instance.getSociety();
+    prefs.setString(PreferenceKey.society, societyModel?.toJson() ?? '');
+
     setState(() {});
   }
 

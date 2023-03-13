@@ -31,9 +31,11 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     notifyListeners();
     try {
+      var map = userProfile.toMap();
+      map['flats'] = {'flatNo': userProfile.flats?.flatNo ?? ''};
       Response response = await _dio.post(
         Api.createUser,
-        data: userProfile.toJson(),
+        data: json.encode(map),
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,
@@ -199,9 +201,11 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     notifyListeners();
     try {
+      var map = vehicle.toMap();
+      map['flats'] = {'flatNo': vehicle.flats};
       Response response = await _dio.post(
         Api.createVehicles,
-        data: vehicle.toJson(),
+        data: json.encode(map),
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,
@@ -233,9 +237,11 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     notifyListeners();
     try {
+      var map = vehicle.toMap();
+      map['flats'] = {'flatNo': vehicle.flats};
       Response response = await _dio.put(
         Api.updateVehicles,
-        data: vehicle.toJson(),
+        data: json.encode(map),
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,

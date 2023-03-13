@@ -47,9 +47,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  loadUser() {
+  loadUser() async {
     userProfile =
         UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
+    userProfile = await _api.getUserById(userProfile?.userId ?? '');
+    prefs.setString(PreferenceKey.user, userProfile?.toJson() ?? '');
     setState(() {});
   }
 
