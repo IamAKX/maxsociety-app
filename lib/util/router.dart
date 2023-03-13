@@ -28,6 +28,7 @@ import 'package:maxsociety/screen/society/govt_circular.dart';
 import 'package:maxsociety/screen/society/mom_details.dart';
 import 'package:maxsociety/screen/society/mom_screen.dart';
 import 'package:maxsociety/screen/society/society_rule_detail.dart';
+import 'package:maxsociety/widget/image_viewer.dart';
 import 'package:maxsociety/widget/main_container.dart';
 
 import '../screen/appintro/app_intro_screen.dart';
@@ -130,6 +131,12 @@ class NavRoute {
         return MaterialPageRoute(
           builder: (_) => EditVehicleScreen(
             vehicleNumber: settings.arguments as String,
+          ),
+        );
+      case ImageViewer.routePath:
+        return MaterialPageRoute(
+          builder: (_) => ImageViewer(
+            imageUrl: settings.arguments as String,
           ),
         );
       default:

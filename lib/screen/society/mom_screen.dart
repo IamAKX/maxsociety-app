@@ -56,7 +56,7 @@ class _MomScreenState extends State<MomScreen> {
               Navigator.of(context)
                   .pushNamed(CreateMomScreen.routePath)
                   .then((value) {
-                setState(() {});
+                loadCirculars();
               });
             },
             child: const Text('Create'),
@@ -81,20 +81,22 @@ class _MomScreenState extends State<MomScreen> {
           return ListTile(
             leading: CircleAvatar(
               backgroundColor: primaryColor.withOpacity(0.1),
-              child: Text('${index + 1}'),
+              child: Text('${circularList.elementAt(index).circularNo}'),
             ),
             title: Text(
               circularList.elementAt(index).subject ?? '',
               maxLines: 2,
             ),
             subtitle: Text(
-              'Held on ${eventDateToDate(circularList.elementAt(index).eventDate??'')}',
+              'Held on ${eventDateToDate(circularList.elementAt(index).eventDate ?? '')}',
               maxLines: 2,
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               Navigator.of(context)
-                  .pushNamed(MomDetailScreen.routePath, arguments: index + 1);
+                  .pushNamed(MomDetailScreen.routePath,
+                      arguments: circularList.elementAt(index).circularId)
+                  .then((value) => loadCirculars());
             },
           );
         },
