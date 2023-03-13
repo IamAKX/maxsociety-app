@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maxsociety/model/flat_model.dart';
+import 'package:maxsociety/model/operation_detail_model.dart';
 import 'package:maxsociety/screen/admin_controls/community_member_list.dart';
 import 'package:maxsociety/screen/admin_controls/create_community_member.dart';
 import 'package:maxsociety/screen/admin_controls/create_flat.dart';
@@ -10,6 +11,7 @@ import 'package:maxsociety/screen/admin_controls/flat_screen.dart';
 import 'package:maxsociety/screen/admin_controls/flat_summary.dart';
 import 'package:maxsociety/screen/admin_controls/society_details.dart';
 import 'package:maxsociety/screen/admin_controls/society_member_list.dart';
+import 'package:maxsociety/screen/admin_controls/user_detail_screen.dart';
 import 'package:maxsociety/screen/event/create_event.dart';
 import 'package:maxsociety/screen/event/event_detail.dart';
 import 'package:maxsociety/screen/forgot_password/forgot_password_screen.dart';
@@ -58,11 +60,17 @@ class NavRoute {
         return MaterialPageRoute(
             builder: (_) => const ProfileDetailUpdateScreen());
       case VehicleScreen.routePath:
-        return MaterialPageRoute(builder: (_) => const VehicleScreen());
+        return MaterialPageRoute(
+            builder: (_) => VehicleScreen(
+                  operationDetail: settings.arguments as OperationDetailModel,
+                ));
       case AddVehicleScreen.routePath:
         return MaterialPageRoute(builder: (_) => const AddVehicleScreen());
       case FamilyScreen.routePath:
-        return MaterialPageRoute(builder: (_) => const FamilyScreen());
+        return MaterialPageRoute(
+            builder: (_) => FamilyScreen(
+                  operationDetail: settings.arguments as OperationDetailModel,
+                ));
       case AddFamilyMemberScreen.routePath:
         return MaterialPageRoute(builder: (_) => const AddFamilyMemberScreen());
       case AboutSocietyScreen.routePath:
@@ -144,6 +152,12 @@ class NavRoute {
         return MaterialPageRoute(
           builder: (_) => PDFViewer(
             fileUrl: settings.arguments as String,
+          ),
+        );
+      case UserDetail.routePath:
+        return MaterialPageRoute(
+          builder: (_) => UserDetail(
+            userId: settings.arguments as String,
           ),
         );
       default:

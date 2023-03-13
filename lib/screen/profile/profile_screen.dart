@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:maxsociety/main.dart';
+import 'package:maxsociety/model/operation_detail_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/login/login_screen.dart';
 import 'package:maxsociety/screen/profile/family_screen.dart';
@@ -253,7 +254,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   onTap: () {
                     Navigator.of(context)
-                        .pushNamed(menuItems[index].navigatorRoute!)
+                        .pushNamed(
+                          menuItems[index].navigatorRoute!,
+                          arguments: OperationDetailModel(
+                              allowEdit: true,
+                              flatNo: userProfile?.flats?.flatNo ?? ''),
+                        )
                         .then((value) => loadUser());
                   },
                 );

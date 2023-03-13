@@ -9,14 +9,16 @@ import 'package:maxsociety/widget/heading.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
+import '../../model/operation_detail_model.dart';
 import '../../model/user_profile_model.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
 import '../../util/preference_key.dart';
 
 class VehicleScreen extends StatefulWidget {
-  const VehicleScreen({super.key});
+  const VehicleScreen({super.key, required this.operationDetail});
   static const String routePath = '/vehicleScreen';
+  final OperationDetailModel operationDetail;
 
   @override
   State<VehicleScreen> createState() => _VehicleScreenState();
@@ -52,20 +54,21 @@ class _VehicleScreenState extends State<VehicleScreen> {
       appBar: AppBar(
         title: Heading(title: 'Vehicle'),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(AddVehicleScreen.routePath)
-                  .then((value) => loadVehicleData());
-            },
-            child: Text(
-              'Add Vehicle',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                  ),
+          if (widget.operationDetail.allowEdit ?? false)
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(AddVehicleScreen.routePath)
+                    .then((value) => loadVehicleData());
+              },
+              child: Text(
+                'Add Vehicle',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor,
+                    ),
+              ),
             ),
-          ),
         ],
       ),
       body: getBody(context),
@@ -144,36 +147,43 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                 ),
                       ),
                       const Spacer(),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () async {
-                          _api
-                              .deleteVehicle(
-                                  vehicleList.elementAt(index).vehicleNo ?? '')
-                              .then((value) => loadVehicleData());
-                        },
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.red,
+                      if (widget.operationDetail.allowEdit ?? false)
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () async {
+                            _api
+                                .deleteVehicle(
+                                    vehicleList.elementAt(index).vehicleNo ??
+                                        '')
+                                .then((value) => loadVehicleData());
+                          },
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () async {
-                          Navigator.of(context)
-                              .pushNamed(EditVehicleScreen.routePath,
-                                  arguments:
-                                      vehicleList.elementAt(index).vehicleNo ??
-                                          '')
-                              .then((value) => loadVehicleData());
-                        },
-                        icon: const Icon(
-                          Icons.edit,
-                          color: Colors.blue,
-                        ),
-                      )
+                      if (widget.operationDetail.allowEdit ?? false)
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () async {
+                            Navigator.of(context)
+                                .pushNamed(EditVehicleScreen.routePath,
+                                    arguments: vehicleList
+                                            .elementAt(index)
+                                            .vehicleNo ??
+                                        '')
+                                .then((value) => loadVehicleData());
+                          },
+                          icon: const Icon(
+                            Icons.edit,
+                            color: Colors.blue,
+                          ),
+                        )
                     ],
                   ),
+                ),
+                const SizedBox(
+                  height: defaultPadding / 2,
                 ),
               ],
             ),

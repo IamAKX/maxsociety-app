@@ -55,7 +55,7 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
               Navigator.of(context)
                   .pushNamed(CreateRuleScreen.routePath)
                   .then((value) {
-                setState(() {});
+                loadCirculars();
               });
             },
             child: const Text('Create'),
@@ -80,7 +80,7 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
           return ListTile(
             leading: CircleAvatar(
               backgroundColor: primaryColor.withOpacity(0.1),
-              child: Text('${index + 1}'),
+              child: Text('${circularList.elementAt(index).circularNo}'),
             ),
             title: Text(
               circularList.elementAt(index).subject ?? '',
@@ -94,7 +94,7 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
             onTap: () {
               Navigator.of(context).pushNamed(
                   SocietyRuleDetailsScreen.routePath,
-                  arguments: index + 1);
+                  arguments: circularList.elementAt(index).circularId);
             },
           );
         },

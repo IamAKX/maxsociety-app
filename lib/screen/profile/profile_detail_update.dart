@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
 import 'package:maxsociety/main.dart';
@@ -11,7 +14,9 @@ import 'package:provider/provider.dart';
 
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
+import '../../util/colors.dart';
 import '../../util/constants.dart';
+import '../../util/datetime_formatter.dart';
 
 class ProfileDetailUpdateScreen extends StatefulWidget {
   const ProfileDetailUpdateScreen({super.key});
@@ -33,6 +38,7 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
   final TextEditingController _superBuiltUpAreaCtrl = TextEditingController();
   String _gender = genderList.first;
   late UserProfile userProfile;
+  String dob = '';
   late ApiProvider _api;
 
   @override
@@ -56,6 +62,8 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
     _blockCtrl.text = userProfile.flats?.wing ?? '';
     _superBuiltUpAreaCtrl.text = userProfile.flats?.buitlUpArea ?? '';
     _carpetAreaCtrl.text = userProfile.flats?.carpetArea ?? '';
+    dob = eventDateToDate(userProfile.dob ?? '');
+
     setState(() {});
   }
 
@@ -137,6 +145,48 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
           ),
         ),
         const SizedBox(
+          height: defaultPadding / 2,
+        ),
+        Text(
+          'Select Date of Birth',
+          style: Theme.of(context).textTheme.labelMedium,
+        ),
+        const SizedBox(
+          height: defaultPadding / 2,
+        ),
+        DateTimePicker(
+          type: DateTimePickerType.date,
+          initialValue: dob,
+          // initialDate: parseServerTimestamp(userProfile.dob ?? ''),
+          firstDate: DateTime(DateTime.now().year - 100),
+          lastDate: DateTime.now(),
+          dateHintText: 'Date',
+          timeHintText: 'Time',
+          dateMask: 'd MMM, yyyy',
+          calendarTitle: 'Date of Birth',
+          onChanged: (val) => dob = val,
+          validator: (val) {
+            return null;
+          },
+          onSaved: (val) => dob = val!,
+          decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                color: primaryColor,
+                width: 1,
+              ),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                width: 0,
+                style: BorderStyle.none,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
           height: defaultPadding * 2,
         ),
         Text(
@@ -213,19 +263,31 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
         ),
         ActiveButton(
           onPressed: () async {
-            if (_nameCtrl.text.isEmpty || _phoneCtrl.text.isEmpty) {
+            if (_nameCtrl.text.isEmpty ||
+                _phoneCtrl.text.isEmpty ||
+                dob.isEmpty) {
               SnackBarService.instance
                   .showSnackBarError('None of the field can be empty');
+              return;
+            }
+            try {
+              log(dob);
+              dob = formatFromDatepickerToDatabaseOnlyDate(dob);
+            } catch (e) {
+              SnackBarService.instance
+                  .showSnackBarError('Enter date and time of the event');
               return;
             }
             userProfile.userName = _nameCtrl.text;
             userProfile.mobileNo = _phoneCtrl.text;
             userProfile.gender = _gender;
+            userProfile.dob = dob;
             _api.updateUser(userProfile).then((value) {
               if (value) {
                 userProfile.userName = _nameCtrl.text;
                 userProfile.mobileNo = _phoneCtrl.text;
                 userProfile.gender = _gender;
+                userProfile.dob = dob;
                 prefs.setString(PreferenceKey.user, userProfile.toJson());
                 Navigator.of(context).pop();
               }

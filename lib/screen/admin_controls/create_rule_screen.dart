@@ -140,6 +140,11 @@ class _CreateRuleScreenState extends State<CreateRuleScreen> {
               SnackBarService.instance.showSnackBarError('Pick effective date');
               return;
             }
+            if (effectiveDate.isEmpty) {
+              SnackBarService.instance
+                  .showSnackBarError('Select effective date');
+              return;
+            }
             var createCircularReqBody = {
               'subject': _titleCtrl.text,
               'circularText': _descCtrl.text,

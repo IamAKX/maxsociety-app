@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
+import '../../model/operation_detail_model.dart';
 import '../../model/user_profile_model.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
@@ -15,8 +16,9 @@ import '../../util/preference_key.dart';
 import '../../util/theme.dart';
 
 class FamilyScreen extends StatefulWidget {
-  const FamilyScreen({super.key});
+  const FamilyScreen({super.key, required this.operationDetail});
   static const String routePath = '/familyScreen';
+  final OperationDetailModel operationDetail;
 
   @override
   State<FamilyScreen> createState() => _FamilyScreenState();
@@ -54,22 +56,23 @@ class _FamilyScreenState extends State<FamilyScreen> {
       appBar: AppBar(
         title: Heading(title: 'Family'),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(AddFamilyMemberScreen.routePath)
-                  .then(
-                    (value) => loadFamily(),
-                  );
-            },
-            child: Text(
-              'Add Family',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: primaryColor,
-                  ),
+          if (widget.operationDetail.allowEdit ?? false)
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(AddFamilyMemberScreen.routePath)
+                    .then(
+                      (value) => loadFamily(),
+                    );
+              },
+              child: Text(
+                'Add Family',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor,
+                    ),
+              ),
             ),
-          ),
         ],
       ),
       body: getBody(context),
@@ -122,17 +125,18 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     color: Colors.green,
                   ),
                 ),
-                IconButton(
-                  onPressed: () async {
-                    _api
-                        .deleteUser(familyList.elementAt(index).userId ?? '')
-                        .then((value) => loadFamily());
-                  },
-                  icon: const Icon(
-                    Icons.person_remove_alt_1_sharp,
-                    color: Colors.red,
+                if (widget.operationDetail.allowEdit ?? false)
+                  IconButton(
+                    onPressed: () async {
+                      _api
+                          .deleteUser(familyList.elementAt(index).userId ?? '')
+                          .then((value) => loadFamily());
+                    },
+                    icon: const Icon(
+                      Icons.person_remove_alt_1_sharp,
+                      color: Colors.red,
+                    ),
                   ),
-                ),
               ],
             ),
           );

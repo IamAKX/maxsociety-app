@@ -6,6 +6,8 @@ class Api {
   static const String getUserByUserId = '${baseUrl}maxsociety/users/';
   static const String createUser = '${baseUrl}maxsociety/users/';
   static const String updateUser = '${baseUrl}maxsociety/users/';
+  static const String getUserByRole =
+      '${baseUrl}maxsociety/users/?societyCode=1&relation=SELF&role=';
 
   // circular
   static const String getCirculars = '${baseUrl}maxsociety/circulars';
@@ -15,8 +17,7 @@ class Api {
   static const String updateCirculars = '${baseUrl}maxsociety/circulars';
   static const String getCircularsByCircularType =
       '${baseUrl}maxsociety/circulars/type/';
-  static const String getCircularById =
-      '${baseUrl}maxsociety/circulars/';
+  static const String getCircularById = '${baseUrl}maxsociety/circulars/';
 
   // flat
   static const String getFlats = '${baseUrl}maxsociety/flats';

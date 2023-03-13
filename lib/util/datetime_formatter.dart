@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -16,6 +18,15 @@ String formatToServerTimestamp(DateTime date) {
     return DateFormat(serverTimestampFormat).format(date);
   } catch (e) {
     return '';
+  }
+}
+
+DateTime parseServerTimestamp(String date) {
+  try {
+    return DateFormat(serverTimestampFormat).parse(date);
+  } catch (e) {
+    log(e.toString());
+    return DateTime.now();
   }
 }
 
