@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../model/circular_model.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
+import '../../util/datetime_formatter.dart';
 import '../../util/enums.dart';
 
 class SocietyRuleScreen extends StatefulWidget {
@@ -86,7 +87,7 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
               maxLines: 2,
             ),
             subtitle: Text(
-              'Effected from ${circularList.elementAt(index).eventDate}',
+              'Effected from ${eventDateToDate(circularList.elementAt(index).eventDate ?? '')}',
               maxLines: 2,
             ),
             trailing: const Icon(Icons.chevron_right),

@@ -1,23 +1,69 @@
 import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 const String serverTimestampFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
 String formatDateOfBirth(DateTime date) {
-  return DateFormat('dd/MM/yyyy').format(date);
+  try {
+    return DateFormat('dd/MM/yyyy').format(date);
+  } catch (e) {
+    return '';
+  }
 }
 
 String formatToServerTimestamp(DateTime date) {
-  return DateFormat(serverTimestampFormat).format(date);
+  try {
+    return DateFormat(serverTimestampFormat).format(date);
+  } catch (e) {
+    return '';
+  }
 }
 
 String formatFromDatepickerToDatabase(String date) {
-  String datePickerFormat = 'yyyy-MM-dd HH:mm';
-  DateTime dateTime = DateFormat(datePickerFormat).parse(date);
-  return formatToServerTimestamp(dateTime);
+  try {
+    String datePickerFormat = 'yyyy-MM-dd HH:mm';
+    DateTime dateTime = DateFormat(datePickerFormat).parse(date);
+    return formatToServerTimestamp(dateTime);
+  } catch (e) {
+    return '';
+  }
 }
 
 String formatFromDatepickerToDatabaseOnlyDate(String date) {
-  String datePickerFormat = 'yyyy-MM-dd';
-  DateTime dateTime = DateFormat(datePickerFormat).parse(date);
-  return formatToServerTimestamp(dateTime);
+  try {
+    String datePickerFormat = 'yyyy-MM-dd';
+    DateTime dateTime = DateFormat(datePickerFormat).parse(date);
+    return formatToServerTimestamp(dateTime);
+  } catch (e) {
+    return '';
+  }
+}
+
+String eventDateToDate(String date) {
+  try {
+    String dateFormat = 'dd MMM, yyyy';
+    DateTime dateTime = DateFormat(serverTimestampFormat).parse(date);
+    return DateFormat(dateFormat).format(dateTime);
+  } catch (e) {
+    return '';
+  }
+}
+
+String eventDateToDateTime(String date) {
+  try {
+    String dateFormat = "dd MMM, yyyy 'at' hh:mm aa";
+    DateTime dateTime = DateFormat(serverTimestampFormat).parse(date);
+    return DateFormat(dateFormat).format(dateTime);
+  } catch (e) {
+    return '';
+  }
+}
+
+String eventTimesAgo(String date) {
+  try {
+    DateTime dateTime = DateFormat(serverTimestampFormat).parse(date);
+    return timeago.format(dateTime);
+  } catch (e) {
+    return '';
+  }
 }

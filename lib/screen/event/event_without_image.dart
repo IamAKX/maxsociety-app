@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../model/circular_model.dart';
 import '../../util/colors.dart';
+import '../../util/datetime_formatter.dart';
 import '../../util/messages.dart';
 import '../../util/theme.dart';
 import 'dart:math' as math;
@@ -69,7 +70,7 @@ class EventWithoutImage extends StatelessWidget {
                           ),
                     ),
                     Text(
-                      '${circular.updatedBy?.flats?.tower} - ${circular.updatedBy?.flats?.flatNo}  •  1min ago',
+                      '${circular.updatedBy?.flats?.tower} - ${circular.updatedBy?.flats?.flatNo}  •  ${eventTimesAgo(circular.updatedOn ?? '')}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
@@ -84,8 +85,8 @@ class EventWithoutImage extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context)
-                  .pushNamed(EventDetail.routePath, arguments: true);
+              Navigator.of(context).pushNamed(EventDetail.routePath,
+                  arguments: circular.circularId.toString());
             },
             child: Container(
               width: double.infinity,
@@ -117,7 +118,7 @@ class EventWithoutImage extends StatelessWidget {
                     width: defaultPadding / 2,
                   ),
                   Text(
-                    circular.eventDate ?? '',
+                    eventDateToDateTime(circular.eventDate ?? ''),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

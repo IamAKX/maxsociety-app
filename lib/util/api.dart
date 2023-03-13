@@ -15,6 +15,8 @@ class Api {
   static const String updateCirculars = '${baseUrl}maxsociety/circulars';
   static const String getCircularsByCircularType =
       '${baseUrl}maxsociety/circulars/type/';
+  static const String getCircularById =
+      '${baseUrl}maxsociety/circulars/';
 
   // flat
   static const String getFlats = '${baseUrl}maxsociety/flats';

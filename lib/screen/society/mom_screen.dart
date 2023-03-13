@@ -8,6 +8,7 @@ import '../../model/circular_model.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
 import '../../util/colors.dart';
+import '../../util/datetime_formatter.dart';
 import '../../util/enums.dart';
 import '../../util/messages.dart';
 
@@ -87,7 +88,7 @@ class _MomScreenState extends State<MomScreen> {
               maxLines: 2,
             ),
             subtitle: Text(
-              'Held on ${circularList.elementAt(index).eventDate}',
+              'Held on ${eventDateToDate(circularList.elementAt(index).eventDate??'')}',
               maxLines: 2,
             ),
             trailing: const Icon(Icons.chevron_right),

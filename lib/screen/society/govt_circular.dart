@@ -8,6 +8,7 @@ import 'package:maxsociety/widget/custom_textfield.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
+import '../../model/circular_model.dart';
 import '../../model/user_profile_model.dart';
 import '../../service/api_service.dart';
 import '../../service/storage_service.dart';
@@ -32,6 +33,25 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
   UserProfile userProfile =
       UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
   late ApiProvider _api;
+  List<CircularModel> circularList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadCirculars(),
+    );
+  }
+
+  loadCirculars() async {
+    _api
+        .getCircularsByCircularType(CircularType.GOVT_CIRCULAR.name)
+        .then((value) {
+      setState(() {
+        circularList = value.data ?? [];
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +85,14 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
   }
 
   getBody(BuildContext context) {
+    if (_api.status == ApiStatus.failed) {
+      return Center(
+        child: Text(
+          'No Goverment Circular found',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      );
+    }
     return ListView.separated(
         itemBuilder: (context, index) {
           return ListTile(
@@ -73,11 +101,11 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
               color: primaryColor,
             ),
             title: Text(
-              'Circular #$index',
+              circularList.elementAt(index).subject ?? '',
               maxLines: 2,
             ),
             subtitle: Text(
-              'Uploaded on $index Feb, 2023',
+              'Uploaded on ${eventDateToDate(circularList.elementAt(index).eventDate??'')}',
               maxLines: 2,
             ),
             trailing: const Icon(Icons.download_outlined),
@@ -89,7 +117,7 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
             color: dividerColor,
           );
         },
-        itemCount: 10);
+        itemCount: circularList.length);
   }
 
   void showFileUploadPopup(File file, BuildContext context) {

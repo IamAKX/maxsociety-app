@@ -110,7 +110,7 @@ class _EventScreenState extends State<EventScreen> {
               Navigator.of(context)
                   .pushNamed(CreateEventScreen.routePath)
                   .then((value) {
-                setState(() {});
+                loadCirculars();
               });
             },
             child: const Text('Create'),

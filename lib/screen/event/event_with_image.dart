@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/screen/event/event_detail.dart';
+import 'package:maxsociety/util/datetime_formatter.dart';
 
 import '../../util/colors.dart';
 import '../../util/messages.dart';
@@ -67,7 +68,7 @@ class EventWithImage extends StatelessWidget {
                           ),
                     ),
                     Text(
-                      '${circular.updatedBy?.flats?.tower} - ${circular.updatedBy?.flats?.flatNo}  •  1min ago',
+                      '${circular.updatedBy?.flats?.tower} - ${circular.updatedBy?.flats?.flatNo}  •  ${eventTimesAgo(circular.updatedOn ?? '')}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
@@ -82,16 +83,16 @@ class EventWithImage extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context)
-                  .pushNamed(EventDetail.routePath, arguments: true);
+              Navigator.of(context).pushNamed(EventDetail.routePath,
+                  arguments: circular.circularId.toString());
             },
             child: CachedNetworkImage(
-              imageUrl: circular.updatedBy?.imagePath ?? '',
+              imageUrl: circular.circularImages?.first.imageUrl ?? '',
               fit: BoxFit.fitWidth,
               placeholder: (context, url) =>
                   const Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Image.asset(
-                'assets/banner/login_banner.jpeg',
+                'assets/image/404.jpg',
               ),
             ),
           ),
@@ -110,7 +111,7 @@ class EventWithImage extends StatelessWidget {
                     width: defaultPadding / 2,
                   ),
                   Text(
-                    circular.eventDate ?? '',
+                    eventDateToDateTime(circular.eventDate ?? ''),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

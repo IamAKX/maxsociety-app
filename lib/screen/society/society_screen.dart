@@ -84,7 +84,7 @@ class _SocietyScreenState extends State<SocietyScreen> {
                     placeholder: (context, url) =>
                         const Center(child: CircularProgressIndicator()),
                     errorWidget: (context, url, error) => Image.asset(
-                      'assets/banner/login_banner.jpeg',
+                      'assets/image/404.jpg',
                       width: double.infinity,
                       fit: BoxFit.cover,
                       height: 230.0,

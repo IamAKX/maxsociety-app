@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/list/circular_list_model.dart';
 import 'package:maxsociety/model/list/user_list_model.dart';
@@ -506,5 +507,39 @@ class ApiProvider extends ChangeNotifier {
       log(e.toString());
     }
     return circularList;
+  }
+
+  Future<CircularModel> getCircularById(String circularId) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late CircularModel circular;
+    log('${Api.getCircularById}$circularId');
+    try {
+      Response response = await _dio.get(
+        '${Api.getCircularById}$circularId',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        circular = CircularModel.fromMap(response.data['data']);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return circular;
   }
 }

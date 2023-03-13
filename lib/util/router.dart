@@ -49,7 +49,7 @@ class NavRoute {
       case EventDetail.routePath:
         return MaterialPageRoute(
           builder: (_) => EventDetail(
-            isTextOnly: settings.arguments as bool,
+            circularId: settings.arguments as String,
           ),
         );
       case ProfileDetailUpdateScreen.routePath:
