@@ -135,7 +135,7 @@ class _CommunityMemberListScreenState extends State<CommunityMemberListScreen> {
                           ),
                     ),
                     subtitle: Text(
-                      '${userList.elementAt(index).flats?.tower}  •  ${userList.elementAt(index).designation}',
+                      '${userList.elementAt(index).flats?.flatNo}  •  ${userList.elementAt(index).designation}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     trailing: Row(
