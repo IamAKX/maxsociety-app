@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
 import 'package:maxsociety/widget/custom_textfield.dart';
+import 'package:maxsociety/widget/pdf_viewer.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -105,11 +106,18 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
               maxLines: 2,
             ),
             subtitle: Text(
-              'Uploaded on ${eventDateToDate(circularList.elementAt(index).eventDate??'')}',
+              'Uploaded on ${eventDateToDate(circularList.elementAt(index).eventDate ?? '')}',
               maxLines: 2,
             ),
-            trailing: const Icon(Icons.download_outlined),
-            onTap: () {},
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.of(context).pushNamed(PDFViewer.routePath,
+                  arguments: circularList
+                      .elementAt(index)
+                      .circularImages
+                      ?.first
+                      .imageUrl);
+            },
           );
         },
         separatorBuilder: (context, index) {

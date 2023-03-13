@@ -821,6 +821,62 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: ab3eac31638e80663eae19c71e362012e1e2f67dfd527dc5c07d9397cd4238f2
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.53"
+  syncfusion_flutter_pdf:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_pdf
+      sha256: ff8fbd891dab7d67826f874c2949d99057cfe4da126702c3aebdd8a92af36cb7
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.53"
+  syncfusion_flutter_pdfviewer:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_pdfviewer
+      sha256: "60dd43d9dcbeda76d998c6faec7e99260cdcd17d4fa30fa0d37bdb3535c04e92"
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.53"
+  syncfusion_pdfviewer_macos:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_macos
+      sha256: b8f260fa14177bf0b59d1d37574454fcc7d6b197ccdf2bac03296eaa11a89725
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.53"
+  syncfusion_pdfviewer_platform_interface:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_platform_interface
+      sha256: e1e1d06b5cbef9ab4974ad618fa80a7a660e29304e908509d7954f957065cc02
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.53"
+  syncfusion_pdfviewer_web:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_web
+      sha256: aa440fc7beac743897e482990db2c3e2f4ffb8d4b5a6c7f367150c78ced2333d
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.53"
+  syncfusion_pdfviewer_windows:
+    dependency: transitive
+    description:
+      name: syncfusion_pdfviewer_windows
+      sha256: "64e63308010b6f55019a9f8b76e029a837ee1b540b0874cfa2021228e5c7bee2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "20.4.53"
   synchronized:
     dependency: transitive
     description:
