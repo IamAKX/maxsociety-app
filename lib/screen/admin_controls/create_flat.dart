@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:maxsociety/main.dart';
 import 'package:maxsociety/model/flat_model.dart';
@@ -161,7 +163,7 @@ class _CreateFlatState extends State<CreateFlat> {
           onPressed: () {
             try {
               List<FlatModel> flatList = [];
-              for (var ch = _startWingCtrl.text.codeUnits[0];
+              for (int ch = _startWingCtrl.text.codeUnits[0];
                   ch <= _endWingCtrl.text.codeUnits[0];
                   ch++) {
                 for (var i = 1; i <= int.parse(_floorCtrl.text); i++) {
@@ -172,7 +174,7 @@ class _CreateFlatState extends State<CreateFlat> {
                         tower: String.fromCharCode(ch),
                         floor: i,
                         flatNo:
-                            '$i${j.toString().padLeft(selectedFormat, '0')}',
+                            '${String.fromCharCode(ch)}-$i${j.toString().padLeft(selectedFormat, '0')}',
                         buitlUpArea: _builtUpCtrl.text,
                         carpetArea: _carpetCtrl.text,
                       ),
@@ -180,7 +182,7 @@ class _CreateFlatState extends State<CreateFlat> {
                   }
                 }
               }
-
+              log(flatList.length.toString());
               Navigator.of(context)
                   .pushNamed(FlatSummary.routePath, arguments: flatList);
             } catch (e) {

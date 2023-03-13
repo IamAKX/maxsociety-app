@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/list/circular_list_model.dart';
+import 'package:maxsociety/model/list/flat_list_model.dart';
 import 'package:maxsociety/model/list/user_list_model.dart';
 import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
@@ -579,5 +580,82 @@ class ApiProvider extends ChangeNotifier {
       log(e.toString());
     }
     return userList;
+  }
+
+  Future<FlatListModel> getFlatList() async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late FlatListModel flatList;
+    try {
+      Response response = await _dio.get(
+        Api.getFlats,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        flatList = FlatListModel.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return flatList;
+  }
+
+  Future<bool> createFlatInBulk(List<FlatModel> flatList) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      var reqBody = [];
+      for (FlatModel flat in flatList) {
+        var map = flat.toMap();
+        map['society'] = {'societyCode': 1};
+        map.remove('vehicles');
+        reqBody.add(map);
+      }
+      log('length = ${reqBody.length}');
+      log(json.encode(reqBody));
+      Response response = await _dio.post(
+        Api.createFlatInBulk,
+        data: json.encode(reqBody),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance
+            .showSnackBarSuccess('${flatList.length} flats created');
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
   }
 }

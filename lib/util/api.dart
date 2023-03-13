@@ -26,6 +26,7 @@ class Api {
   static const String getFlatByFlatNo = '${baseUrl}maxsociety/flats/';
   static const String createFlat = '${baseUrl}maxsociety/flats';
   static const String updateFlat = '${baseUrl}maxsociety/flats';
+  static const String createFlatInBulk = '${baseUrl}maxsociety/flats/list';
 
   // vehicle
   static const String getVehicles = '${baseUrl}maxsociety/vehicles';
