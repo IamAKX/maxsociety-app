@@ -41,6 +41,7 @@ class _SocietyMemberScreenState extends State<SocietyMemberScreen> {
   loadUsers() async {
     UserListModel model = await _api.getUsersByRole('MEMBER');
     mainUserList = model.data ?? [];
+    userList.clear();
     userList.addAll(mainUserList);
 
     _searchCtrl.addListener(() {
