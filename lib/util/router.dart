@@ -34,6 +34,7 @@ import 'package:maxsociety/widget/image_viewer.dart';
 import 'package:maxsociety/widget/main_container.dart';
 import 'package:maxsociety/widget/pdf_viewer.dart';
 
+import '../screen/admin_controls/update_flat.dart';
 import '../screen/appintro/app_intro_screen.dart';
 import '../screen/service_request/all_service_request.dart';
 import '../screen/service_request/create_service_request.dart';
@@ -158,6 +159,12 @@ class NavRoute {
         return MaterialPageRoute(
           builder: (_) => UserDetail(
             userId: settings.arguments as String,
+          ),
+        );
+      case UpdateFlat.routePath:
+        return MaterialPageRoute(
+          builder: (_) => UpdateFlat(
+            flat: settings.arguments as FlatModel,
           ),
         );
       default:

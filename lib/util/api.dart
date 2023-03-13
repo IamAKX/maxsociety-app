@@ -7,7 +7,7 @@ class Api {
   static const String createUser = '${baseUrl}maxsociety/users/';
   static const String updateUser = '${baseUrl}maxsociety/users/';
   static const String getUserByRole =
-      '${baseUrl}maxsociety/users/?societyCode=1&relation=SELF&role=';
+      '${baseUrl}maxsociety/users/?relation=SELF&role=';
 
   // circular
   static const String getCirculars = '${baseUrl}maxsociety/circulars';
@@ -25,7 +25,8 @@ class Api {
       '${baseUrl}maxsociety/flats/members/';
   static const String getFlatByFlatNo = '${baseUrl}maxsociety/flats/';
   static const String createFlat = '${baseUrl}maxsociety/flats';
-  static const String updateFlat = '${baseUrl}maxsociety/flats';
+  static const String updateFlat = '${baseUrl}maxsociety/flats/';
+  static const String deleteFlat = '${baseUrl}maxsociety/flats/';
   static const String createFlatInBulk = '${baseUrl}maxsociety/flats/list';
 
   // vehicle

@@ -43,15 +43,18 @@ class _CreateSocietyMemberScreenState extends State<CreateSocietyMemberScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _flatNumberCtrl.addListener(() async {
-      if (_flatNumberCtrl.text.length > 3) {
-        await _api.getFlatByFlatNo(_flatNumberCtrl.text.trim()).then((flat) {
-          _floorNumberCtrl.text = flat.floor.toString();
-          _blockCtrl.text = flat.wing ?? '';
-          _superBuiltUpAreaCtrl.text = flat.buitlUpArea ?? '';
-          _carpetAreaCtrl.text = flat.carpetArea ?? '';
-        });
-      }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _flatNumberCtrl.addListener(() async {
+        if (_flatNumberCtrl.text.length > 3) {
+          await _api.getFlatByFlatNo(_flatNumberCtrl.text.trim()).then((flat) {
+            _floorNumberCtrl.text = flat.floor.toString();
+            _blockCtrl.text = flat.wing ?? '';
+            _superBuiltUpAreaCtrl.text = flat.buitlUpArea ?? '';
+            _carpetAreaCtrl.text = flat.carpetArea ?? '';
+          });
+        }
+      });
     });
   }
 

@@ -658,4 +658,69 @@ class ApiProvider extends ChangeNotifier {
     }
     return false;
   }
+
+  Future<bool> deleteFlat(String flatNo) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.delete(
+        '${Api.deleteFlat}$flatNo',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 204) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess('Flat is deleted');
+        return true;
+      }
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> updateFlat(FlatModel flat) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      var map = flat.toMap();
+      map['society'] = {'societyCode': 1};
+      map.remove('vehicles');
+
+      var reqBody = json.encode(map);
+      Response response = await _dio.put(
+        Api.updateFlat,
+        data: reqBody,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess('Flat updated');
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
 }

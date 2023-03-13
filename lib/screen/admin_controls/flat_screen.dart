@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/screen/admin_controls/create_flat.dart';
+import 'package:maxsociety/screen/admin_controls/update_flat.dart';
 import 'package:maxsociety/util/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -65,13 +66,21 @@ class _FlatScreenState extends State<FlatScreen> {
       shrinkWrap: true,
       itemCount: flatList.length,
       itemBuilder: (context, index) => Center(
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: dividerColor),
-            borderRadius: BorderRadius.circular(4),
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context)
+                .pushNamed(UpdateFlat.routePath,
+                    arguments: flatList.elementAt(index))
+                .then((value) => loadFlats());
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: dividerColor),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            alignment: Alignment.center,
+            child: Text('${flatList.elementAt(index).flatNo}'),
           ),
-          alignment: Alignment.center,
-          child: Text('${flatList.elementAt(index).flatNo}'),
         ),
       ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
