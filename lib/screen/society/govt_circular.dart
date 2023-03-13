@@ -178,7 +178,7 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
             };
             _api.createCircular(createCircularReqBody).then((value) {
               if (value) {
-                setState(() {});
+                loadCirculars();
               }
             });
           },
