@@ -114,6 +114,19 @@ class _VideoGalleryState extends State<VideoGallery> {
                           size: 50,
                         ),
                       ),
+                    ),
+                    Positioned(
+                      right: 1,
+                      top: 1,
+                      child: IconButton(
+                        onPressed: () {
+                          showDeletePopup(context, list.elementAt(index));
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                      ),
                     )
                   ],
                 ),
@@ -242,6 +255,45 @@ class _VideoGalleryState extends State<VideoGallery> {
           Text('Please wait...'),
         ],
       ),
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void showDeletePopup(BuildContext context, GalleryModel item) {
+    AlertDialog alert = AlertDialog(
+      title: const Text("Delete video"),
+      content: const Text('Are you sure you want to delete this video?'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+
+            _api.deleteGalleryItem(item.galleryItemId ?? 0).then((value) {
+              if (value) {
+                loadGallery();
+              }
+            });
+          },
+          child: Text(
+            'Delete',
+            style: Theme.of(context)
+                .textTheme
+                .labelLarge
+                ?.copyWith(color: Colors.red),
+          ),
+        ),
+      ],
     );
     showDialog(
       context: context,

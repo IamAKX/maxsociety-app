@@ -89,6 +89,9 @@ class _PhotoGalleryState extends State<PhotoGallery> {
               Navigator.of(context).pushNamed(ImageViewer.routePath,
                   arguments: list.elementAt(index).galleryItemPath ?? '');
             },
+            onLongPress: () {
+              showDeletePopup(context, list.elementAt(index));
+            },
             child: CachedNetworkImage(
               imageUrl: list.elementAt(index).galleryItemPath ?? '',
               fit: BoxFit.cover,
@@ -155,6 +158,45 @@ class _PhotoGalleryState extends State<PhotoGallery> {
       ],
     );
 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void showDeletePopup(BuildContext context, GalleryModel item) {
+    AlertDialog alert = AlertDialog(
+      title: const Text("Delete photo"),
+      content: const Text('Are you sure you want to delete this photo?'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+
+            _api.deleteGalleryItem(item.galleryItemId ?? 0).then((value) {
+              if (value) {
+                loadGallery();
+              }
+            });
+          },
+          child: Text(
+            'Delete',
+            style: Theme.of(context)
+                .textTheme
+                .labelLarge
+                ?.copyWith(color: Colors.red),
+          ),
+        ),
+      ],
+    );
     showDialog(
       context: context,
       builder: (BuildContext context) {
