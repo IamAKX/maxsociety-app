@@ -45,4 +45,12 @@ class Api {
   static const String createGalleryItem = '${baseUrl}maxsociety/galleryItems/';
   static const String getGalleryItems = '${baseUrl}maxsociety/galleryItems/';
   static const String deleteGalleryItem = '${baseUrl}maxsociety/galleryItems/';
+
+  // emergency contact
+  static const String createEmergencyContacts =
+      '${baseUrl}maxsociety/emergencyContacts/';
+  static const String getEmergencyContacts =
+      '${baseUrl}maxsociety/emergencyContacts';
+  static const String deleteEmergencyContacts =
+      '${baseUrl}maxsociety/emergencyContacts/';
 }

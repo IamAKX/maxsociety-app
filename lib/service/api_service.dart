@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/list/circular_list_model.dart';
+import 'package:maxsociety/model/list/emergency_contact_list_model.dart';
 import 'package:maxsociety/model/list/flat_list_model.dart';
 import 'package:maxsociety/model/list/gallery_list_model.dart';
 import 'package:maxsociety/model/list/user_list_model.dart';
@@ -813,6 +814,100 @@ class ApiProvider extends ChangeNotifier {
         status = ApiStatus.success;
         notifyListeners();
         SnackBarService.instance.showSnackBarSuccess('Media is deleted');
+        return true;
+      }
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> createEmergencyContact(
+      String category, List<String> phoneNumbers) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      var map = {"category": category, "phoneNumbers": phoneNumbers};
+      Response response = await _dio.post(
+        Api.createEmergencyContacts,
+        data: json.encode(map),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<EmergencyContactListModel> getEmergencyContacts() async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late EmergencyContactListModel emergencyContacts;
+    try {
+      Response response = await _dio.get(
+        Api.getEmergencyContacts,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        emergencyContacts = EmergencyContactListModel.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return emergencyContacts;
+  }
+
+  Future<bool> deleteEmergencyContact(int id, String phoneNo) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.delete(
+        '${Api.deleteEmergencyContacts}$id?phoneNumber=$phoneNo',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 204) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess('Contact number deleted');
         return true;
       }
     } catch (e) {
