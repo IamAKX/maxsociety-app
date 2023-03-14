@@ -4,9 +4,20 @@ import 'package:maxsociety/screen/service_request/create_service_request.dart';
 import 'package:maxsociety/screen/service_request/service_request_details.dart';
 import 'package:maxsociety/util/colors.dart';
 import 'package:maxsociety/util/constants.dart';
+import 'package:maxsociety/util/datetime_formatter.dart';
+import 'package:maxsociety/util/helper_methods.dart';
 import 'package:maxsociety/util/messages.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/heading.dart';
+import 'package:provider/provider.dart';
+
+import '../../main.dart';
+import '../../model/circular_model.dart';
+import '../../model/user_profile_model.dart';
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
+import '../../util/enums.dart';
+import '../../util/preference_key.dart';
 
 class ServiceRequestScreen extends StatefulWidget {
   const ServiceRequestScreen({super.key});
@@ -16,8 +27,33 @@ class ServiceRequestScreen extends StatefulWidget {
 }
 
 class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
+  UserProfile userProfile =
+      UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
+  late ApiProvider _api;
+  List<CircularModel> circularList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadCirculars(),
+    );
+  }
+
+  loadCirculars() async {
+    await _api
+        .getServiceRequestByFilter(CircularType.SERVICE_REQUEST.name)
+        .then((value) {
+      setState(() {
+        circularList = value.data ?? [];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       backgroundColor: dividerColor.withOpacity(0.2),
       appBar: AppBar(
@@ -46,7 +82,9 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(AllServiceRequest.routePath);
+                  Navigator.of(context)
+                      .pushNamed(AllServiceRequest.routePath)
+                      .then((value) => loadCirculars());
                 },
                 child: const Text('View all'),
               ),
@@ -57,14 +95,15 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
           width: double.infinity,
           height: 160,
           child: ListView.builder(
-            itemCount: 5,
+            itemCount: circularList.length > 5 ? 5 : circularList.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed(
-                      ServiceRequestDetail.routePath,
-                      arguments: index + 1);
+                  Navigator.of(context)
+                      .pushNamed(ServiceRequestDetail.routePath,
+                          arguments: circularList.elementAt(index).circularId)
+                      .then((value) => loadCirculars());
                 },
                 child: Card(
                   margin: const EdgeInsets.only(
@@ -84,7 +123,7 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                             padding: const EdgeInsets.all(defaultPadding / 2),
                             color: primaryColor.withOpacity(0.1),
                             child: Text(
-                              loremIpsumText,
+                              circularList.elementAt(index).subject ?? '',
                               style: Theme.of(context).textTheme.bodyLarge,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
@@ -102,7 +141,10 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${serviceRequestCategories[index]}',
+                                    circularList
+                                            .elementAt(index)
+                                            .circularCategory ??
+                                        '',
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelLarge
@@ -110,32 +152,31 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),
-                                  (index % 2 == 0)
-                                      ? Text(
-                                          'Closed',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelLarge
-                                              ?.copyWith(
-                                                color: Colors.green,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        )
-                                      : Text(
-                                          'Pending',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelLarge
-                                              ?.copyWith(
-                                                color: Colors.amber,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                  Text(
+                                    circularList
+                                            .elementAt(index)
+                                            .circularStatus ??
+                                        '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(
+                                          color: getCircularStatusColor(
+                                            circularList
+                                                    .elementAt(index)
+                                                    .circularStatus ??
+                                                '',
+                                          ),
+                                          fontWeight: FontWeight.bold,
                                         ),
+                                  )
                                 ],
                               ),
                               const Spacer(),
                               Text(
-                                '$index days ago',
+                                eventTimesAgo(
+                                    circularList.elementAt(index).updatedOn ??
+                                        ''),
                               ),
                               const Icon(
                                 Icons.chevron_right_outlined,
@@ -179,8 +220,10 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed(CreateServiceScreen.routePath,
-                      arguments: serviceRequestCategories[index]);
+                  Navigator.of(context)
+                      .pushNamed(CreateServiceScreen.routePath,
+                          arguments: serviceRequestCategories[index])
+                      .then((value) => loadCirculars());
                 },
                 child: Container(
                   color: background,

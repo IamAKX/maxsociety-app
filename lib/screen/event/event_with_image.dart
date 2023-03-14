@@ -89,6 +89,7 @@ class EventWithImage extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: circular.circularImages?.first.imageUrl ?? '',
               fit: BoxFit.fitWidth,
+              width: double.infinity,
               placeholder: (context, url) =>
                   const Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Image.asset(
@@ -96,10 +97,13 @@ class EventWithImage extends StatelessWidget {
               ),
             ),
           ),
-          if (circular.showEventDate ?? false)
+          const SizedBox(
+            height: defaultPadding / 2,
+          ),
+          if (circular.showEventDate ?? false) ...{
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: defaultPadding / 2, vertical: defaultPadding / 2),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
               child: Row(
                 children: [
                   const Icon(
@@ -117,6 +121,10 @@ class EventWithImage extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(
+              height: defaultPadding / 2,
+            ),
+          },
           Padding(
             padding: const EdgeInsets.only(
                 left: defaultPadding / 2,

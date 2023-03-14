@@ -133,7 +133,7 @@ class _SocietyMemberScreenState extends State<SocietyMemberScreen> {
                           ),
                     ),
                     subtitle: Text(
-                      '${userList.elementAt(index).flats?.tower} - ${userList.elementAt(index).flats?.flatNo}  •  ${userList.elementAt(index).email}',
+                      '${userList.elementAt(index).flats?.flatNo}  •  ${userList.elementAt(index).email}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     trailing: Row(

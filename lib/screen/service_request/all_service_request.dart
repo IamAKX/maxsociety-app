@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:maxsociety/screen/service_request/service_request_details.dart';
+import 'package:maxsociety/util/datetime_formatter.dart';
+import 'package:maxsociety/util/helper_methods.dart';
+import 'package:provider/provider.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
+import '../../main.dart';
+import '../../model/circular_model.dart';
+import '../../model/user_profile_model.dart';
+import '../../service/api_service.dart';
+import '../../service/snakbar_service.dart';
 import '../../util/colors.dart';
 import '../../util/constants.dart';
+import '../../util/enums.dart';
 import '../../util/messages.dart';
+import '../../util/preference_key.dart';
 import '../../util/theme.dart';
 import '../../widget/heading.dart';
 
@@ -17,8 +27,33 @@ class AllServiceRequest extends StatefulWidget {
 }
 
 class _AllServiceRequestState extends State<AllServiceRequest> {
+  UserProfile userProfile =
+      UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
+  late ApiProvider _api;
+  List<CircularModel> circularList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadCirculars(),
+    );
+  }
+
+  loadCirculars() async {
+    await _api
+        .getServiceRequestByFilter(CircularType.SERVICE_REQUEST.name)
+        .then((value) {
+      setState(() {
+        circularList = value.data ?? [];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -27,7 +62,7 @@ class _AllServiceRequestState extends State<AllServiceRequest> {
           bottom: TabBar(
             tabs: const [
               Tab(
-                text: 'Pending',
+                text: 'Open',
               ),
               Tab(
                 text: 'Closed',
@@ -47,22 +82,31 @@ class _AllServiceRequestState extends State<AllServiceRequest> {
         ),
         body: TabBarView(
           children: [
-            pendingSerice(false),
-            pendingSerice(true),
+            serviceItems(circularList
+                .where((element) =>
+                    element.circularStatus == CircularStatus.OPEN.name)
+                .toList()),
+            serviceItems(circularList
+                .where((element) =>
+                    element.circularStatus == CircularStatus.CLOSED.name)
+                .toList()),
           ],
         ),
       ),
     );
   }
 
-  pendingSerice(bool isPending) {
+  serviceItems(List<CircularModel> list) {
     return ListView.builder(
-      itemCount: 10,
+      padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+      itemCount: list.length,
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed(ServiceRequestDetail.routePath,
-                arguments: index + 1);
+            Navigator.of(context)
+                .pushNamed(ServiceRequestDetail.routePath,
+                    arguments: list.elementAt(index).circularId)
+                .then((value) => loadCirculars());
           },
           child: Card(
             margin: const EdgeInsets.only(
@@ -79,7 +123,7 @@ class _AllServiceRequestState extends State<AllServiceRequest> {
                   padding: const EdgeInsets.all(defaultPadding / 2),
                   color: primaryColor.withOpacity(0.1),
                   child: Text(
-                    loremIpsumText,
+                    list.elementAt(index).subject ?? '',
                     style: Theme.of(context).textTheme.bodyLarge,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -96,7 +140,7 @@ class _AllServiceRequestState extends State<AllServiceRequest> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            serviceRequestCategories[0],
+                            list.elementAt(index).circularCategory ?? '',
                             style: Theme.of(context)
                                 .textTheme
                                 .labelLarge
@@ -104,32 +148,23 @@ class _AllServiceRequestState extends State<AllServiceRequest> {
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
-                          (isPending)
-                              ? Text(
-                                  'Closed',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge
-                                      ?.copyWith(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                )
-                              : Text(
-                                  'Pending',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge
-                                      ?.copyWith(
-                                        color: Colors.amber,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                          Text(
+                            list.elementAt(index).circularStatus ?? '',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                  color: getCircularStatusColor(
+                                      list.elementAt(index).circularStatus ??
+                                          ''),
+                                  fontWeight: FontWeight.bold,
                                 ),
+                          )
                         ],
                       ),
                       const Spacer(),
                       Text(
-                        '$index days ago',
+                        eventTimesAgo(list.elementAt(index).updatedOn ?? ''),
                       ),
                       const Icon(
                         Icons.chevron_right_outlined,
