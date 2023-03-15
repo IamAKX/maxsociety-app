@@ -97,6 +97,21 @@ class _AllServiceRequestState extends State<AllServiceRequest> {
   }
 
   serviceItems(List<CircularModel> list) {
+    if (list.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(defaultPadding),
+          child: Text(
+            'You do not have service request under this section',
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(color: hintColor),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: defaultPadding),
       itemCount: list.length,

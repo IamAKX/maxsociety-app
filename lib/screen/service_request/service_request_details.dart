@@ -66,7 +66,7 @@ class _ServiceRequestDetailState extends State<ServiceRequestDetail> {
                             ? CircularStatus.CLOSED.name
                             : CircularStatus.OPEN.name;
 
-                    _api.updateCircular(circular!).then((value) {
+                    await _api.updateCircular(circular!).then((value) {
                       if (value) {
                         Navigator.of(context).pop();
                       }

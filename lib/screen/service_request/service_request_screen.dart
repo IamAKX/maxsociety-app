@@ -67,132 +67,134 @@ class _ServiceRequestScreenState extends State<ServiceRequestScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: defaultPadding,
+        if (circularList.isNotEmpty) ...{
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: defaultPadding,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Recent request',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed(AllServiceRequest.routePath)
+                        .then((value) => loadCirculars());
+                  },
+                  child: const Text('View all'),
+                ),
+              ],
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Recent request',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+          SizedBox(
+            width: double.infinity,
+            height: 160,
+            child: ListView.builder(
+              itemCount: circularList.length > 5 ? 5 : circularList.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(ServiceRequestDetail.routePath,
+                            arguments: circularList.elementAt(index).circularId)
+                        .then((value) => loadCirculars());
+                  },
+                  child: Card(
+                    margin: const EdgeInsets.only(
+                      left: defaultPadding,
+                      right: defaultPadding,
+                      bottom: defaultPadding,
                     ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .pushNamed(AllServiceRequest.routePath)
-                      .then((value) => loadCirculars());
-                },
-                child: const Text('View all'),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          height: 160,
-          child: ListView.builder(
-            itemCount: circularList.length > 5 ? 5 : circularList.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  Navigator.of(context)
-                      .pushNamed(ServiceRequestDetail.routePath,
-                          arguments: circularList.elementAt(index).circularId)
-                      .then((value) => loadCirculars());
-                },
-                child: Card(
-                  margin: const EdgeInsets.only(
-                    left: defaultPadding,
-                    right: defaultPadding,
-                    bottom: defaultPadding,
-                  ),
-                  color: background,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            width: double.maxFinite,
-                            padding: const EdgeInsets.all(defaultPadding / 2),
-                            color: primaryColor.withOpacity(0.1),
-                            child: Text(
-                              circularList.elementAt(index).subject ?? '',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
+                    color: background,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              width: double.maxFinite,
+                              padding: const EdgeInsets.all(defaultPadding / 2),
+                              color: primaryColor.withOpacity(0.1),
+                              child: Text(
+                                circularList.elementAt(index).subject ?? '',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(
-                            defaultPadding / 2,
-                          ),
-                          child: Row(
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    circularList
-                                            .elementAt(index)
-                                            .circularCategory ??
-                                        '',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  ),
-                                  Text(
-                                    circularList
-                                            .elementAt(index)
-                                            .circularStatus ??
-                                        '',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge
-                                        ?.copyWith(
-                                          color: getCircularStatusColor(
-                                            circularList
-                                                    .elementAt(index)
-                                                    .circularStatus ??
-                                                '',
+                          Padding(
+                            padding: const EdgeInsets.all(
+                              defaultPadding / 2,
+                            ),
+                            child: Row(
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      circularList
+                                              .elementAt(index)
+                                              .circularCategory ??
+                                          '',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                  )
-                                ],
-                              ),
-                              const Spacer(),
-                              Text(
-                                eventTimesAgo(
-                                    circularList.elementAt(index).updatedOn ??
-                                        ''),
-                              ),
-                              const Icon(
-                                Icons.chevron_right_outlined,
-                                color: hintColor,
-                              ),
-                            ],
+                                    ),
+                                    Text(
+                                      circularList
+                                              .elementAt(index)
+                                              .circularStatus ??
+                                          '',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(
+                                            color: getCircularStatusColor(
+                                              circularList
+                                                      .elementAt(index)
+                                                      .circularStatus ??
+                                                  '',
+                                            ),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    )
+                                  ],
+                                ),
+                                const Spacer(),
+                                Text(
+                                  eventTimesAgo(
+                                      circularList.elementAt(index).updatedOn ??
+                                          ''),
+                                ),
+                                const Icon(
+                                  Icons.chevron_right_outlined,
+                                  color: hintColor,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
+        },
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: defaultPadding,

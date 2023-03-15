@@ -970,6 +970,7 @@ class ApiProvider extends ChangeNotifier {
       map['createdBy'] = {"userId": circular.createdBy?.userId};
       map['updatedBy'] = {"userId": circular.createdBy?.userId};
       map.remove('society');
+      map.remove('circularImages');
       var reqBody = json.encode(map);
       log(reqBody);
       Response response = await _dio.put(
