@@ -36,8 +36,9 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
   final TextEditingController _blockCtrl = TextEditingController();
   final TextEditingController _carpetAreaCtrl = TextEditingController();
   final TextEditingController _superBuiltUpAreaCtrl = TextEditingController();
+  final TextEditingController _dateOfBirthCtrl = TextEditingController();
   String _gender = genderList.first;
-  late UserProfile userProfile;
+  UserProfile? userProfile;
   String dob = '';
   late ApiProvider _api;
 
@@ -53,17 +54,17 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
   loadUser() {
     userProfile =
         UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
-    _nameCtrl.text = userProfile.userName ?? '';
-    _emailCtrl.text = userProfile.email ?? '';
-    _phoneCtrl.text = userProfile.mobileNo ?? '';
-    _gender = userProfile.gender ?? '';
-    _flatNumberCtrl.text = userProfile.flats?.flatNo ?? '';
-    _floorNumberCtrl.text = userProfile.flats?.floor.toString() ?? '';
-    _blockCtrl.text = userProfile.flats?.wing ?? '';
-    _superBuiltUpAreaCtrl.text = userProfile.flats?.buitlUpArea ?? '';
-    _carpetAreaCtrl.text = userProfile.flats?.carpetArea ?? '';
-    dob = eventDateToDate(userProfile.dob ?? '');
-
+    _nameCtrl.text = userProfile?.userName ?? '';
+    _emailCtrl.text = userProfile?.email ?? '';
+    _phoneCtrl.text = userProfile?.mobileNo ?? '';
+    _gender = userProfile?.gender ?? '';
+    _flatNumberCtrl.text = userProfile?.flats?.flatNo ?? '';
+    _floorNumberCtrl.text = userProfile?.flats?.floor.toString() ?? '';
+    _blockCtrl.text = userProfile?.flats?.wing ?? '';
+    _superBuiltUpAreaCtrl.text = userProfile?.flats?.buitlUpArea ?? '';
+    _carpetAreaCtrl.text = userProfile?.flats?.carpetArea ?? '';
+    dob = eventDateToDate(userProfile?.dob ?? '');
+    _dateOfBirthCtrl.text = dob;
     setState(() {});
   }
 
@@ -71,7 +72,6 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
     _api = Provider.of<ApiProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'Profile Detail'),
@@ -81,6 +81,9 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
   }
 
   getBody(BuildContext context) {
+    log('dob : $dob');
+    log('parseServerTimestamp(userProfile?.dob ?? '
+        ') : ${parseServerTimestamp(userProfile?.dob ?? '')}');
     return ListView(
       padding: const EdgeInsets.all(defaultPadding),
       children: [
@@ -157,9 +160,11 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
         DateTimePicker(
           type: DateTimePickerType.date,
           initialValue: dob,
-          // initialDate: parseServerTimestamp(userProfile.dob ?? ''),
+          // controller: _dateOfBirthCtrl,
+          initialDate: parseServerTimestamp(userProfile?.dob ?? ''),
           firstDate: DateTime(DateTime.now().year - 100),
           lastDate: DateTime.now(),
+          initialDatePickerMode: DatePickerMode.year,
           dateHintText: 'Date',
           timeHintText: 'Time',
           dateMask: 'd MMM, yyyy',
@@ -278,17 +283,18 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
                   .showSnackBarError('Enter date and time of the event');
               return;
             }
-            userProfile.userName = _nameCtrl.text;
-            userProfile.mobileNo = _phoneCtrl.text;
-            userProfile.gender = _gender;
-            userProfile.dob = dob;
-            _api.updateUser(userProfile).then((value) {
+            userProfile?.userName = _nameCtrl.text;
+            userProfile?.mobileNo = _phoneCtrl.text;
+            userProfile?.gender = _gender;
+            userProfile?.dob = dob;
+            _api.updateUser(userProfile!).then((value) {
               if (value) {
-                userProfile.userName = _nameCtrl.text;
-                userProfile.mobileNo = _phoneCtrl.text;
-                userProfile.gender = _gender;
-                userProfile.dob = dob;
-                prefs.setString(PreferenceKey.user, userProfile.toJson());
+                userProfile?.userName = _nameCtrl.text;
+                userProfile?.mobileNo = _phoneCtrl.text;
+                userProfile?.gender = _gender;
+                userProfile?.dob = dob;
+                prefs.setString(
+                    PreferenceKey.user, userProfile?.toJson() ?? '');
                 Navigator.of(context).pop();
               }
             });

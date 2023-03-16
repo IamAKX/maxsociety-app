@@ -77,20 +77,24 @@ class _SocietyScreenState extends State<SocietyScreen> {
                     // ),
                   ),
                   height: 230.0,
-                  child: CachedNetworkImage(
-                    imageUrl: societyModel?.societyDetails?.imagePath ?? '',
-                    width: double.infinity,
-                    height: 230.0,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => Image.asset(
-                      'assets/image/404.jpg',
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      height: 230.0,
-                    ),
-                  ),
+                  child: (societyModel?.societyDetails?.imagePath?.isEmpty ??
+                          true)
+                      ? Container()
+                      : CachedNetworkImage(
+                          imageUrl:
+                              societyModel?.societyDetails?.imagePath ?? '',
+                          width: double.infinity,
+                          height: 230.0,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'assets/image/404.jpg',
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            height: 230.0,
+                          ),
+                        ),
                 ),
                 Container(
                   height: 240.0,

@@ -25,7 +25,7 @@ DateTime parseServerTimestamp(String date) {
   try {
     return DateFormat(serverTimestampFormat).parse(date);
   } catch (e) {
-    log(e.toString());
+    log(date + ':' + e.toString());
     return DateTime.now();
   }
 }
