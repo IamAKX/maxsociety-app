@@ -179,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(
-                      '${userProfile?.flats?.tower ?? ''}   •   Flat ${userProfile?.flats?.flatNo ?? ''}',
+                      '${userProfile?.flats?.tower ?? '-'}   •   ${userProfile?.flats?.flatNo ?? '-'}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(
@@ -202,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                '${userProfile?.familyMembersCount}',
+                                '${userProfile?.familyMembersCount ?? 0}',
                                 style:
                                     Theme.of(context).textTheme.headlineSmall,
                               ),
@@ -224,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '${userProfile?.flats?.vehicles?.length}',
+                                '${userProfile?.flats?.vehicles?.length ?? 0}',
                                 style:
                                     Theme.of(context).textTheme.headlineSmall,
                               ),

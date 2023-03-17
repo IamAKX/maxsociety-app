@@ -50,25 +50,27 @@ class _PhotoGalleryState extends State<PhotoGallery> {
     SnackBarService.instance.buildContext = context;
     _api = Provider.of<ApiProvider>(context);
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          FilePickerResult? result = await FilePicker.platform.pickFiles(
-            type: FileType.custom,
-            allowedExtensions: ['png', 'jpg', 'jpeg'],
-          );
+      floatingActionButton: isAdminUser()
+          ? FloatingActionButton(
+              onPressed: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['png', 'jpg', 'jpeg'],
+                );
 
-          if (result != null) {
-            File file = File(result.files.single.path!);
-            showFileUploadPopup(file, context);
-          }
-        },
-        elevation: defaultPadding,
-        backgroundColor: Colors.white,
-        child: Image.asset(
-          'assets/logo/image_upload.png',
-          width: 35,
-        ),
-      ),
+                if (result != null) {
+                  File file = File(result.files.single.path!);
+                  showFileUploadPopup(file, context);
+                }
+              },
+              elevation: defaultPadding,
+              backgroundColor: Colors.white,
+              child: Image.asset(
+                'assets/logo/image_upload.png',
+                width: 35,
+              ),
+            )
+          : null,
       body: GridView.custom(
         semanticChildCount: 10,
         gridDelegate: SliverQuiltedGridDelegate(

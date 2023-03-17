@@ -53,25 +53,27 @@ class _VideoGalleryState extends State<VideoGallery> {
     SnackBarService.instance.buildContext = context;
     _api = Provider.of<ApiProvider>(context);
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          FilePickerResult? result = await FilePicker.platform.pickFiles(
-            type: FileType.custom,
-            allowedExtensions: ['mp4'],
-          );
+      floatingActionButton: isAdminUser()
+          ? FloatingActionButton(
+              onPressed: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['mp4'],
+                );
 
-          if (result != null) {
-            File file = File(result.files.single.path!);
-            showFileUploadPopup(file, context);
-          }
-        },
-        elevation: defaultPadding,
-        backgroundColor: Colors.white,
-        child: Image.asset(
-          'assets/logo/video_upload.png',
-          width: 35,
-        ),
-      ),
+                if (result != null) {
+                  File file = File(result.files.single.path!);
+                  showFileUploadPopup(file, context);
+                }
+              },
+              elevation: defaultPadding,
+              backgroundColor: Colors.white,
+              child: Image.asset(
+                'assets/logo/video_upload.png',
+                width: 35,
+              ),
+            )
+          : null,
       body: ListView.builder(
         itemCount: list.length,
         itemBuilder: (context, index) {

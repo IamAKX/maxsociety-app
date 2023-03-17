@@ -185,9 +185,11 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
         ),
         ActiveButton(
           onPressed: () async {
-            if (_titleCtrl.text.isEmpty || _descCtrl.text.isEmpty) {
-              SnackBarService.instance
-                  .showSnackBarError('Title or Detail cannot be empty');
+            if (_titleCtrl.text.isEmpty ||
+                _descCtrl.text.isEmpty ||
+                meetingDate.isEmpty) {
+              SnackBarService.instance.showSnackBarError(
+                  'Title, Detail or Meeting date cannot be empty');
               return;
             }
             try {
@@ -195,7 +197,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
               meetingDate = formatFromDatepickerToDatabaseOnlyDate(meetingDate);
             } catch (e) {
               SnackBarService.instance
-                  .showSnackBarError('Enter date and time of the event');
+                  .showSnackBarError('Enter date of the meeting');
               return;
             }
             String imageUrl = '';

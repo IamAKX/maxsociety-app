@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maxsociety/screen/admin_controls/create_mom_screen.dart';
 import 'package:maxsociety/screen/society/mom_details.dart';
+import 'package:maxsociety/util/helper_methods.dart';
 import 'package:maxsociety/widget/heading.dart';
 import 'package:provider/provider.dart';
 
@@ -36,6 +37,8 @@ class _MomScreenState extends State<MomScreen> {
     _api.getCircularsByCircularType(CircularType.MOM.name).then((value) {
       setState(() {
         circularList = value.data ?? [];
+        circularList.sort(((a, b) => int.parse(a.circularNo ?? '0')
+            .compareTo(int.parse(b.circularNo ?? '0'))));
       });
     });
   }
@@ -51,16 +54,17 @@ class _MomScreenState extends State<MomScreen> {
           overrideFontSize: 28,
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(CreateMomScreen.routePath)
-                  .then((value) {
-                loadCirculars();
-              });
-            },
-            child: const Text('Create'),
-          )
+          if (isAdminUser())
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(CreateMomScreen.routePath)
+                    .then((value) {
+                  loadCirculars();
+                });
+              },
+              child: const Text('Create'),
+            )
         ],
       ),
       body: getBody(context),

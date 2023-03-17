@@ -63,22 +63,23 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
       appBar: AppBar(
         title: Heading(title: 'Govt. Circular'),
         actions: [
-          TextButton(
-            onPressed: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['pdf'],
-              );
+          if (isAdminUser())
+            TextButton(
+              onPressed: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['pdf'],
+                );
 
-              if (result != null) {
-                File file = File(result.files.single.path!);
-                showFileUploadPopup(file, context);
-              } else {
-                // User canceled the picker
-              }
-            },
-            child: const Text('Upload'),
-          )
+                if (result != null) {
+                  File file = File(result.files.single.path!);
+                  showFileUploadPopup(file, context);
+                } else {
+                  // User canceled the picker
+                }
+              },
+              child: const Text('Upload'),
+            )
         ],
       ),
       body: getBody(context),

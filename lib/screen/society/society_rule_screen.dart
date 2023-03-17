@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:maxsociety/screen/admin_controls/create_rule_screen.dart';
 import 'package:maxsociety/screen/society/society_rule_detail.dart';
 import 'package:maxsociety/util/colors.dart';
+import 'package:maxsociety/util/helper_methods.dart';
 import 'package:maxsociety/util/messages.dart';
 import 'package:maxsociety/widget/heading.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +39,8 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
         .then((value) {
       setState(() {
         circularList = value.data ?? [];
+        circularList.sort(((a, b) => int.parse(a.circularNo ?? '0')
+            .compareTo(int.parse(b.circularNo ?? '0'))));
       });
     });
   }
@@ -50,16 +53,17 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
       appBar: AppBar(
         title: Heading(title: 'Society Rules'),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(CreateRuleScreen.routePath)
-                  .then((value) {
-                loadCirculars();
-              });
-            },
-            child: const Text('Create'),
-          ),
+          if (isAdminUser())
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(CreateRuleScreen.routePath)
+                    .then((value) {
+                  loadCirculars();
+                });
+              },
+              child: const Text('Create'),
+            ),
         ],
       ),
       body: getBody(context),

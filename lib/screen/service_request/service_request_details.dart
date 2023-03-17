@@ -56,27 +56,28 @@ class _ServiceRequestDetailState extends State<ServiceRequestDetail> {
       appBar: AppBar(
         title: Heading(title: 'Request #${circular?.circularNo ?? ''}'),
         actions: [
-          TextButton(
-            onPressed: (_api.status == ApiStatus.loading)
-                ? null
-                : () async {
-                    circular?.circularStatus =
-                        (circular?.circularStatus ?? '') ==
-                                CircularStatus.OPEN.name
-                            ? CircularStatus.CLOSED.name
-                            : CircularStatus.OPEN.name;
+          if (isAdminUser())
+            TextButton(
+              onPressed: (_api.status == ApiStatus.loading)
+                  ? null
+                  : () async {
+                      circular?.circularStatus =
+                          (circular?.circularStatus ?? '') ==
+                                  CircularStatus.OPEN.name
+                              ? CircularStatus.CLOSED.name
+                              : CircularStatus.OPEN.name;
 
-                    await _api.updateCircular(circular!).then((value) {
-                      if (value) {
-                        Navigator.of(context).pop();
-                      }
-                    });
-                  },
-            child: Text(
-                (circular?.circularStatus ?? '') == CircularStatus.OPEN.name
-                    ? 'Close'
-                    : 'Open'),
-          )
+                      await _api.updateCircular(circular!).then((value) {
+                        if (value) {
+                          Navigator.of(context).pop();
+                        }
+                      });
+                    },
+              child: Text(
+                  (circular?.circularStatus ?? '') == CircularStatus.OPEN.name
+                      ? 'Close'
+                      : 'Open'),
+            )
         ],
       ),
       body: getBody(context),

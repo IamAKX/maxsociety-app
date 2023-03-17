@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:maxsociety/model/emergency_contact_model.dart';
+import 'package:maxsociety/util/helper_methods.dart';
 import 'package:maxsociety/widget/heading.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -90,13 +91,14 @@ class _EmergencyContactState extends State<EmergencyContact> {
                             ),
                       ),
                       const Spacer(),
-                      IconButton(
-                        onPressed: () {
-                          createAddContactPopup(
-                              contactList.elementAt(index), context);
-                        },
-                        icon: const Icon(Icons.add),
-                      )
+                      if (isAdminUser())
+                        IconButton(
+                          onPressed: () {
+                            createAddContactPopup(
+                                contactList.elementAt(index), context);
+                          },
+                          icon: const Icon(Icons.add),
+                        )
                     ],
                   ),
                   for (String ph
@@ -125,17 +127,18 @@ class _EmergencyContactState extends State<EmergencyContact> {
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const Spacer(),
-        IconButton(
-          onPressed: () async {
-            await _api.deleteEmergencyContact(id, phoneNumber).then(
-                  (value) => loadContacts(),
-                );
-          },
-          icon: const Icon(
-            Icons.delete_forever,
-            color: Colors.red,
+        if (isAdminUser())
+          IconButton(
+            onPressed: () async {
+              await _api.deleteEmergencyContact(id, phoneNumber).then(
+                    (value) => loadContacts(),
+                  );
+            },
+            icon: const Icon(
+              Icons.delete_forever,
+              color: Colors.red,
+            ),
           ),
-        ),
         IconButton(
           onPressed: () {
             launchUrl(Uri.parse('tel:$phoneNumber'));

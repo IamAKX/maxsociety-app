@@ -111,54 +111,57 @@ class _SocietyScreenState extends State<SocietyScreen> {
                     ),
                   ),
                 ),
-                Positioned(
-                  bottom: defaultPadding,
-                  right: 2,
-                  child: IconButton(
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        File imageFile = File(image.path);
-                        SnackBarService.instance
-                            .showSnackBarInfo('Uploading file, please wait');
-                        setState(() {
-                          isImageUploading = true;
-                        });
-                        String imageUrl = await StorageService.uploadEventImage(
-                          imageFile,
-                          getFileName(imageFile),
-                          StorageFolders.societyBanner.name,
-                        );
+                if (isAdminUser())
+                  Positioned(
+                    bottom: defaultPadding,
+                    right: 2,
+                    child: IconButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          File imageFile = File(image.path);
+                          SnackBarService.instance
+                              .showSnackBarInfo('Uploading file, please wait');
+                          setState(() {
+                            isImageUploading = true;
+                          });
+                          String imageUrl =
+                              await StorageService.uploadEventImage(
+                            imageFile,
+                            getFileName(imageFile),
+                            StorageFolders.societyBanner.name,
+                          );
 
-                        setState(() {
-                          isImageUploading = false;
-                        });
-                        societyModel?.societyDetails?.imagePath = imageUrl;
-                        await _api.updateSociety(societyModel!).then((value) {
-                          if (value) {
-                            societyModel?.societyDetails?.imagePath = imageUrl;
-                            prefs.setString(PreferenceKey.society,
-                                societyModel?.toJson() ?? '');
-                            loadSociety();
-                          }
-                        });
-                      }
-                    },
-                    icon: isImageUploading || _api.status == ApiStatus.loading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(),
-                          )
-                        : const Icon(
-                            Icons.add_photo_alternate,
-                            color: textColorDark,
-                            size: 30,
-                          ),
-                  ),
-                )
+                          setState(() {
+                            isImageUploading = false;
+                          });
+                          societyModel?.societyDetails?.imagePath = imageUrl;
+                          await _api.updateSociety(societyModel!).then((value) {
+                            if (value) {
+                              societyModel?.societyDetails?.imagePath =
+                                  imageUrl;
+                              prefs.setString(PreferenceKey.society,
+                                  societyModel?.toJson() ?? '');
+                              loadSociety();
+                            }
+                          });
+                        }
+                      },
+                      icon: isImageUploading || _api.status == ApiStatus.loading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(),
+                            )
+                          : const Icon(
+                              Icons.add_photo_alternate,
+                              color: textColorDark,
+                              size: 30,
+                            ),
+                    ),
+                  )
               ],
             ),
           ),
@@ -200,11 +203,12 @@ class _SocietyScreenState extends State<SocietyScreen> {
       title: 'Emergency contacts',
       navigatorRoute: EmergencyContact.routePath,
     ),
-    SocietyMenuModel(
-      icon: Icons.admin_panel_settings_outlined,
-      title: 'Admin Controls',
-      navigatorRoute: AdminControlsScreen.routePath,
-    ),
+    if (isAdminUser())
+      SocietyMenuModel(
+        icon: Icons.admin_panel_settings_outlined,
+        title: 'Admin Controls',
+        navigatorRoute: AdminControlsScreen.routePath,
+      ),
   ];
 
   getBody(BuildContext context) {
