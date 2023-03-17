@@ -526,6 +526,38 @@ class ApiProvider extends ChangeNotifier {
     return circularList;
   }
 
+  Future<CircularListModel> getCirculars() async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    CircularListModel circularList = CircularListModel(data: []);
+    try {
+      Response response = await _dio.get(
+        Api.getCirculars,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        circularList = CircularListModel.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError('ERR : No circular found');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return circularList;
+  }
+
   Future<CircularModel> getCircularById(String circularId) async {
     status = ApiStatus.loading;
     notifyListeners();

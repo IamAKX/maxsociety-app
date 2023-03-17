@@ -78,3 +78,22 @@ String eventTimesAgo(String date) {
     return '';
   }
 }
+
+String reportDateFormat(String date) {
+  try {
+    String dateFormat = 'dd MMM, yyyy  hh:mm aa';
+    DateTime dateTime = DateFormat(serverTimestampFormat).parse(date);
+    return DateFormat(dateFormat).format(dateTime);
+  } catch (e) {
+    return '';
+  }
+}
+
+String currentDateForFileName() {
+  try {
+    DateTime date = DateTime.now();
+    return DateFormat('dd_MM_yyyy_HH_mm').format(date);
+  } catch (e) {
+    return '';
+  }
+}

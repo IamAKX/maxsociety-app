@@ -22,6 +22,7 @@ import 'package:maxsociety/screen/profile/edit_vehicle_screen.dart';
 import 'package:maxsociety/screen/profile/family_screen.dart';
 import 'package:maxsociety/screen/profile/profile_detail_update.dart';
 import 'package:maxsociety/screen/profile/vehicle_screen.dart';
+import 'package:maxsociety/screen/report/report_screen.dart';
 import 'package:maxsociety/screen/service_request/service_request_details.dart';
 import 'package:maxsociety/screen/society/about_society.dart';
 import 'package:maxsociety/screen/admin_controls/admin_controls_screen.dart';
@@ -173,6 +174,10 @@ class NavRoute {
           builder: (_) => UpdateFlat(
             flat: settings.arguments as FlatModel,
           ),
+        );
+      case ReportScreen.routePath:
+        return MaterialPageRoute(
+          builder: (_) => const ReportScreen(),
         );
       default:
         return errorRoute();

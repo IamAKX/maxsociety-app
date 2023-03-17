@@ -4,6 +4,7 @@ import 'package:maxsociety/screen/admin_controls/create_flat.dart';
 import 'package:maxsociety/screen/admin_controls/flat_screen.dart';
 import 'package:maxsociety/screen/admin_controls/society_details.dart';
 import 'package:maxsociety/screen/admin_controls/society_member_list.dart';
+import 'package:maxsociety/screen/report/report_screen.dart';
 import 'package:maxsociety/screen/society/society_menu_model.dart';
 
 import '../../util/colors.dart';
@@ -47,7 +48,7 @@ class _AdminControlsScreenState extends State<AdminControlsScreen> {
         title: 'Committee Member'),
     SocietyMenuModel(
       icon: Icons.receipt_long_rounded,
-      navigatorRoute: '',
+      navigatorRoute: ReportScreen.routePath,
       title: 'Report',
     ),
   ];

@@ -222,16 +222,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               SnackBarService.instance.showSnackBarError('Enter event details');
               return;
             }
-            if (showDateOnPost) {
-              try {
-                log(eventDate);
-                eventDate = formatFromDatepickerToDatabase(eventDate);
-              } catch (e) {
-                SnackBarService.instance
-                    .showSnackBarError('Enter date and time of the event');
-                return;
-              }
+
+            try {
+              log(eventDate);
+              eventDate = formatFromDatepickerToDatabase(eventDate);
+            } catch (e) {
+              SnackBarService.instance
+                  .showSnackBarError('Enter date and time of the event');
+              return;
             }
+
             String imageUrl = '';
             if (imageFile != null) {
               SnackBarService.instance
