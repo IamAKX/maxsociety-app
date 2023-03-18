@@ -85,7 +85,8 @@ class _ReportScreenState extends State<ReportScreen> {
             color: hintColor,
           ),
           onTap: () async {
-            await ReportGeneratorProvider.instance.generateCircularReport();
+            await ReportGeneratorProvider.instance
+                .generateSocietyMemberReport('MEMBER');
           },
         ),
         const Divider(
@@ -99,7 +100,7 @@ class _ReportScreenState extends State<ReportScreen> {
             color: hintColor,
           ),
           onTap: () async {
-            await ReportGeneratorProvider.instance.generateCircularReport();
+            await ReportGeneratorProvider.instance.generateTenantMemberReport();
           },
         ),
         const Divider(
@@ -113,7 +114,8 @@ class _ReportScreenState extends State<ReportScreen> {
             color: hintColor,
           ),
           onTap: () async {
-            await ReportGeneratorProvider.instance.generateCircularReport();
+            await ReportGeneratorProvider.instance
+                .generateSocietyMemberReport('AUDITOR');
           },
         ),
       ],

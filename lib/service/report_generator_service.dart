@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/service/api_service.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
 import 'package:maxsociety/util/datetime_formatter.dart';
@@ -69,14 +70,13 @@ class ReportGeneratorProvider extends ChangeNotifier {
       Style globalStyle = workbook.styles.add('style');
       globalStyle.bold = true;
       for (var index = 0; index < circularMap.keys.length; index++) {
-        log('circularMap.keys.length :${circularMap.keys.length}');
         final Worksheet sheet = workbook.worksheets[index];
         String cName = circularMap.keys.elementAt(index);
 
         List<CircularModel> cList = circularMap[cName]!;
         sheet.name = cName;
         // Adding header
-        log('cName : $cName');
+
         for (var hIndex = 0; hIndex < headers.length; hIndex++) {
           sheet
               .getRangeByIndex(1, hIndex + 1)
@@ -85,7 +85,6 @@ class ReportGeneratorProvider extends ChangeNotifier {
         }
         for (var rIndex = 0; rIndex < cList.length; rIndex++) {
           CircularModel c = cList.elementAt(rIndex);
-          log('$cName : ${c.circularNo}');
 
           sheet.getRangeByIndex(rIndex + 2, 1).setText(c.circularNo);
 
@@ -134,14 +133,13 @@ class ReportGeneratorProvider extends ChangeNotifier {
             col++;
           }
         }
-        log('$cName report generated');
       }
       final List<int> bytes = workbook.saveAsStream();
       File('$filePath/Circular_${currentDateForFileName()}.xlsx')
           .writeAsBytes(bytes);
 
       workbook.dispose();
-      SnackBarService.instance.showSnackBarSuccess('Circular report generated');
+      SnackBarService.instance.showSnackBarSuccess('Report generated');
       status = ReportGeneratorStatus.ideal;
       notifyListeners();
       return true;
@@ -204,14 +202,13 @@ class ReportGeneratorProvider extends ChangeNotifier {
       Style globalStyle = workbook.styles.add('style');
       globalStyle.bold = true;
       for (var index = 0; index < circularMap.keys.length; index++) {
-        log('circularMap.keys.length :${circularMap.keys.length}');
         final Worksheet sheet = workbook.worksheets[index];
         String cName = circularMap.keys.elementAt(index);
 
         List<CircularModel> cList = circularMap[cName]!;
         sheet.name = cName;
         // Adding header
-        log('cName : $cName');
+
         for (var hIndex = 0; hIndex < headers.length; hIndex++) {
           sheet
               .getRangeByIndex(1, hIndex + 1)
@@ -220,7 +217,6 @@ class ReportGeneratorProvider extends ChangeNotifier {
         }
         for (var rIndex = 0; rIndex < cList.length; rIndex++) {
           CircularModel c = cList.elementAt(rIndex);
-          log('$cName : ${c.circularNo}');
 
           sheet.getRangeByIndex(rIndex + 2, 1).setText(c.circularNo);
 
@@ -269,14 +265,13 @@ class ReportGeneratorProvider extends ChangeNotifier {
             col++;
           }
         }
-        log('$cName report generated');
       }
       final List<int> bytes = workbook.saveAsStream();
       File('$filePath/Service_Request_${currentDateForFileName()}.xlsx')
           .writeAsBytes(bytes);
 
       workbook.dispose();
-      SnackBarService.instance.showSnackBarSuccess('Circular report generated');
+      SnackBarService.instance.showSnackBarSuccess('Report generated');
       status = ReportGeneratorStatus.ideal;
       notifyListeners();
       return true;
@@ -341,14 +336,13 @@ class ReportGeneratorProvider extends ChangeNotifier {
       Style globalStyle = workbook.styles.add('style');
       globalStyle.bold = true;
       for (var index = 0; index < circularMap.keys.length; index++) {
-        log('circularMap.keys.length :${circularMap.keys.length}');
         final Worksheet sheet = workbook.worksheets[index];
         String cName = circularMap.keys.elementAt(index);
 
         List<CircularModel> cList = circularMap[cName]!;
         sheet.name = cName;
         // Adding header
-        log('cName : $cName');
+
         for (var hIndex = 0; hIndex < headers.length; hIndex++) {
           sheet
               .getRangeByIndex(1, hIndex + 1)
@@ -357,7 +351,6 @@ class ReportGeneratorProvider extends ChangeNotifier {
         }
         for (var rIndex = 0; rIndex < cList.length; rIndex++) {
           CircularModel c = cList.elementAt(rIndex);
-          log('$cName : ${c.circularNo}');
 
           sheet.getRangeByIndex(rIndex + 2, 1).setText(c.circularNo);
 
@@ -406,14 +399,228 @@ class ReportGeneratorProvider extends ChangeNotifier {
             col++;
           }
         }
-        log('$cName report generated');
       }
       final List<int> bytes = workbook.saveAsStream();
       File('$filePath/Complaint_${currentDateForFileName()}.xlsx')
           .writeAsBytes(bytes);
 
       workbook.dispose();
-      SnackBarService.instance.showSnackBarSuccess('Circular report generated');
+      SnackBarService.instance.showSnackBarSuccess('Report generated');
+      status = ReportGeneratorStatus.ideal;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      status = ReportGeneratorStatus.ideal;
+      notifyListeners();
+    }
+    return false;
+  }
+
+  Future<bool> generateSocietyMemberReport(String userRole) async {
+    if (Platform.isIOS) {
+      await getApplicationDocumentsDirectory().then((dir) => dir.path);
+    } else {
+      filePath = '/storage/emulated/0/Download';
+    }
+    SnackBarService.instance
+        .showSnackBarInfo('Generating report, please wait...');
+
+    status = ReportGeneratorStatus.loading;
+    notifyListeners();
+    try {
+      List<UserProfile> userList = [];
+      await ApiProvider.instance.getUsersByRole(userRole).then((value) {
+        userList = value.data ?? [];
+      });
+      if (userList.isEmpty) {
+        SnackBarService.instance.showSnackBarError('No data to export');
+        status = ReportGeneratorStatus.ideal;
+        notifyListeners();
+        return false;
+      }
+
+      List<String> headers = [
+        'Name',
+        'Contact',
+        'Email',
+        'Gender',
+        'DOB',
+        'Flat No',
+        'Floor',
+        'Block',
+        'Vehicles',
+        'Family',
+        'Profile Image',
+        'Onboarded On',
+        'Designation',
+        'Category',
+      ];
+      final Workbook workbook = Workbook();
+      Style globalStyle = workbook.styles.add('style');
+      globalStyle.bold = true;
+      final Worksheet sheet = workbook.worksheets[0];
+      String cName = '$userRole MEMBERS';
+
+      sheet.name = cName;
+      // Adding header
+      for (var hIndex = 0; hIndex < headers.length; hIndex++) {
+        sheet.getRangeByIndex(1, hIndex + 1).setText(headers.elementAt(hIndex));
+        sheet.getRangeByIndex(1, hIndex + 1).cellStyle = globalStyle;
+      }
+      for (var rIndex = 0; rIndex < userList.length; rIndex++) {
+        UserProfile c = userList.elementAt(rIndex);
+
+        sheet.getRangeByIndex(rIndex + 2, 1).setText(c.userName);
+
+        sheet.getRangeByIndex(rIndex + 2, 2).setText(c.mobileNo ?? '');
+        sheet.getRangeByIndex(rIndex + 2, 3).setText(c.email ?? '');
+        sheet.getRangeByIndex(rIndex + 2, 4).setText(c.gender ?? '');
+        sheet
+            .getRangeByIndex(rIndex + 2, 5)
+            .setText(eventDateToDate(c.dob ?? ''));
+        sheet.getRangeByIndex(rIndex + 2, 6).setText(c.flats?.flatNo);
+        sheet.getRangeByIndex(rIndex + 2, 7).setText(c.flats?.floor.toString());
+        sheet.getRangeByIndex(rIndex + 2, 8).setText(c.flats?.tower ?? '');
+        sheet
+            .getRangeByIndex(rIndex + 2, 9)
+            .setText(c.flats?.vehicles?.length.toString() ?? '0');
+        sheet
+            .getRangeByIndex(rIndex + 2, 10)
+            .setText(c.familyMembersCount.toString());
+        String imgUrl = (c.imagePath?.isEmpty ?? true) ? '' : c.imagePath ?? '';
+        if (imgUrl.isEmpty) {
+          sheet.getRangeByIndex(rIndex + 2, 11).setText('');
+        } else {
+          final Hyperlink hyperlink = sheet.hyperlinks.add(
+              sheet.getRangeByIndex(rIndex + 2, 11), HyperlinkType.url, imgUrl);
+          hyperlink.screenTip = 'View Profile Image';
+          hyperlink.textToDisplay = 'View Profile Image';
+        }
+        sheet
+            .getRangeByIndex(rIndex + 2, 12)
+            .setText(eventDateToDateTime(c.createdOn ?? ''));
+        sheet.getRangeByIndex(rIndex + 2, 13).setText(c.designation);
+        sheet.getRangeByIndex(rIndex + 2, 14).setText(c.category);
+        int col = 1;
+        while (col <= 14) {
+          sheet.autoFitColumn(col);
+          col++;
+        }
+      }
+      final List<int> bytes = workbook.saveAsStream();
+      File('$filePath/$userRole${currentDateForFileName()}.xlsx')
+          .writeAsBytes(bytes);
+
+      workbook.dispose();
+      SnackBarService.instance.showSnackBarSuccess('Report generated');
+      status = ReportGeneratorStatus.ideal;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      status = ReportGeneratorStatus.ideal;
+      notifyListeners();
+    }
+    return false;
+  }
+
+  Future<bool> generateTenantMemberReport() async {
+    if (Platform.isIOS) {
+      await getApplicationDocumentsDirectory().then((dir) => dir.path);
+    } else {
+      filePath = '/storage/emulated/0/Download';
+    }
+    SnackBarService.instance
+        .showSnackBarInfo('Generating report, please wait...');
+
+    status = ReportGeneratorStatus.loading;
+    notifyListeners();
+    try {
+      List<UserProfile> userList = [];
+      await ApiProvider.instance.getAllUserMember().then((value) {
+        userList = value.data ?? [];
+        userList.removeWhere((element) => element.relationship != 'TENANT');
+      });
+      if (userList.isEmpty) {
+        SnackBarService.instance.showSnackBarError('No data to export');
+        status = ReportGeneratorStatus.ideal;
+        notifyListeners();
+        return false;
+      }
+
+      List<String> headers = [
+        'Name',
+        'Contact',
+        'Email',
+        'Gender',
+        'DOB',
+        'Flat No',
+        'Floor',
+        'Block',
+        'Vehicles',
+        'Family',
+        'Profile Image',
+        'Onboarded On',
+        'Designation',
+        'Category',
+      ];
+      final Workbook workbook = Workbook();
+      Style globalStyle = workbook.styles.add('style');
+      globalStyle.bold = true;
+      final Worksheet sheet = workbook.worksheets[0];
+      String cName = 'TENANTS';
+
+      sheet.name = cName;
+      // Adding header
+      for (var hIndex = 0; hIndex < headers.length; hIndex++) {
+        sheet.getRangeByIndex(1, hIndex + 1).setText(headers.elementAt(hIndex));
+        sheet.getRangeByIndex(1, hIndex + 1).cellStyle = globalStyle;
+      }
+      for (var rIndex = 0; rIndex < userList.length; rIndex++) {
+        UserProfile c = userList.elementAt(rIndex);
+
+        sheet.getRangeByIndex(rIndex + 2, 1).setText(c.userName);
+
+        sheet.getRangeByIndex(rIndex + 2, 2).setText(c.mobileNo ?? '');
+        sheet.getRangeByIndex(rIndex + 2, 3).setText(c.email ?? '');
+        sheet.getRangeByIndex(rIndex + 2, 4).setText(c.gender ?? '');
+        sheet
+            .getRangeByIndex(rIndex + 2, 5)
+            .setText(eventDateToDate(c.dob ?? ''));
+        sheet.getRangeByIndex(rIndex + 2, 6).setText(c.flats?.flatNo);
+        sheet.getRangeByIndex(rIndex + 2, 7).setText(c.flats?.floor.toString());
+        sheet.getRangeByIndex(rIndex + 2, 8).setText(c.flats?.tower ?? '');
+        sheet
+            .getRangeByIndex(rIndex + 2, 9)
+            .setText(c.flats?.vehicles?.length.toString() ?? '0');
+        sheet
+            .getRangeByIndex(rIndex + 2, 10)
+            .setText(c.familyMembersCount.toString());
+        String imgUrl = (c.imagePath?.isEmpty ?? true) ? '' : c.imagePath ?? '';
+        if (imgUrl.isEmpty) {
+          sheet.getRangeByIndex(rIndex + 2, 11).setText('');
+        } else {
+          final Hyperlink hyperlink = sheet.hyperlinks.add(
+              sheet.getRangeByIndex(rIndex + 2, 11), HyperlinkType.url, imgUrl);
+          hyperlink.screenTip = 'View Profile Image';
+          hyperlink.textToDisplay = 'View Profile Image';
+        }
+        sheet
+            .getRangeByIndex(rIndex + 2, 12)
+            .setText(eventDateToDateTime(c.createdOn ?? ''));
+        sheet.getRangeByIndex(rIndex + 2, 13).setText(c.designation);
+        sheet.getRangeByIndex(rIndex + 2, 14).setText(c.category);
+        int col = 1;
+        while (col <= 14) {
+          sheet.autoFitColumn(col);
+          col++;
+        }
+      }
+      final List<int> bytes = workbook.saveAsStream();
+      File('$filePath/TenantMember_${currentDateForFileName()}.xlsx')
+          .writeAsBytes(bytes);
+
+      workbook.dispose();
+      SnackBarService.instance.showSnackBarSuccess('Report generated');
       status = ReportGeneratorStatus.ideal;
       notifyListeners();
       return true;

@@ -1,5 +1,5 @@
 class Api {
-  static const String baseUrl = 'http://43.205.194.226/';
+  static const String baseUrl = 'http://13.234.117.189:80/';
 
   // users
   static const String getAllUsers = '${baseUrl}maxsociety/users/';

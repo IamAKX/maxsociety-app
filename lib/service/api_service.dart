@@ -1034,4 +1034,37 @@ class ApiProvider extends ChangeNotifier {
     }
     return false;
   }
+
+  Future<UserListModel> getAllUserMember() async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late UserListModel userList;
+    try {
+      Response response = await _dio.get(
+        Api.getAllUsers,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        userList = UserListModel.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return userList;
+  }
 }
