@@ -1,10 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:maxsociety/model/app_metadata_model.dart';
 import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/appintro/app_intro_screen.dart';
 import 'package:maxsociety/service/api_service.dart';
 import 'package:maxsociety/service/auth_service.dart';
+import 'package:maxsociety/service/db_service.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
 import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/router.dart';
@@ -17,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 late SharedPreferences prefs;
+AppMetadataModel? appMetadata;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
@@ -33,6 +36,11 @@ Future<void> main() async {
   }
   SocietyModel societyModel = await ApiProvider.instance.getSociety();
   prefs.setString(PreferenceKey.society, societyModel.toJson());
+  await DBService.instance.getAppMetadata();
+  if (prefs.containsKey(PreferenceKey.metadata)) {
+    appMetadata =
+        AppMetadataModel.fromJson(prefs.getString(PreferenceKey.metadata)!);
+  }
 
   runApp(const MyApp());
 }
