@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 import 'package:maxsociety/main.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/screen/admin_controls/flat_summary.dart';
@@ -28,6 +29,8 @@ class _CreateFlatState extends State<CreateFlat> {
   final TextEditingController _builtUpCtrl = TextEditingController();
   final TextEditingController _carpetCtrl = TextEditingController();
   int selectedFormat = 0;
+  String _flatType = flatTypeList.first;
+
   SnackBarService snackBarService = SnackBarService.instance;
   @override
   Widget build(BuildContext context) {
@@ -121,6 +124,29 @@ class _CreateFlatState extends State<CreateFlat> {
           height: defaultPadding / 2,
         ),
         Text(
+          'Select Flat Type',
+          style: Theme.of(context).textTheme.labelMedium,
+        ),
+        SizedBox(
+          height: 50.0,
+          child: RadioGroup<String>.builder(
+            direction: Axis.horizontal,
+            groupValue: _flatType,
+            horizontalAlignment: MainAxisAlignment.spaceAround,
+            onChanged: (value) => setState(() {
+              _flatType = value ?? '';
+            }),
+            items: flatTypeList,
+            textStyle: Theme.of(context).textTheme.bodyLarge,
+            itemBuilder: (item) => RadioButtonBuilder(
+              item,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: defaultPadding / 2,
+        ),
+        Text(
           'Select format',
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.bold,
@@ -173,6 +199,7 @@ class _CreateFlatState extends State<CreateFlat> {
                         wing: String.fromCharCode(ch),
                         tower: String.fromCharCode(ch),
                         floor: i,
+                        type: _flatType,
                         flatNo:
                             '${String.fromCharCode(ch)}-$i${j.toString().padLeft(selectedFormat, '0')}',
                         buitlUpArea: _builtUpCtrl.text,

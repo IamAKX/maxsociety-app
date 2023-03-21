@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/main.dart';
@@ -161,10 +163,15 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       bool res = false;
+      user = _auth.currentUser;
       await user?.updatePassword(newPassword).then((value) {
         res = true;
+        SnackBarService.instance.showSnackBarSuccess('Password changed');
       }).catchError((onError) {
         res = false;
+        log(onError.toString());
+        SnackBarService.instance
+            .showSnackBarError('ERR : ${onError.toString()}');
       });
       status = AuthStatus.authenticated;
       notifyListeners();

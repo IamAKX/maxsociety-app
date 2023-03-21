@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
@@ -6,6 +7,7 @@ import 'package:maxsociety/widget/button_active.dart';
 import 'package:provider/provider.dart';
 
 import '../../service/api_service.dart';
+import '../../util/constants.dart';
 import '../../util/theme.dart';
 import '../../widget/custom_textfield.dart';
 import '../../widget/heading.dart';
@@ -25,6 +27,8 @@ class _UpdateFlatState extends State<UpdateFlat> {
   final TextEditingController _builtUpCtrl = TextEditingController();
   final TextEditingController _carpetCtrl = TextEditingController();
   SnackBarService snackBarService = SnackBarService.instance;
+  String _flatType = flatTypeList.first;
+
   late ApiProvider _api;
   @override
   void initState() {
@@ -32,6 +36,7 @@ class _UpdateFlatState extends State<UpdateFlat> {
     super.initState();
     _builtUpCtrl.text = widget.flat.buitlUpArea ?? '';
     _carpetCtrl.text = widget.flat.carpetArea ?? '';
+    _flatType = widget.flat.type ?? flatTypeList.first;
   }
 
   @override
@@ -70,8 +75,25 @@ class _UpdateFlatState extends State<UpdateFlat> {
         const SizedBox(
           height: defaultPadding / 2,
         ),
-        const SizedBox(
-          height: defaultPadding / 2,
+        Text(
+          'Select Flat Type',
+          style: Theme.of(context).textTheme.labelMedium,
+        ),
+        SizedBox(
+          height: 50.0,
+          child: RadioGroup<String>.builder(
+            direction: Axis.horizontal,
+            groupValue: _flatType,
+            horizontalAlignment: MainAxisAlignment.spaceAround,
+            onChanged: (value) => setState(() {
+              _flatType = value ?? '';
+            }),
+            items: flatTypeList,
+            textStyle: Theme.of(context).textTheme.bodyLarge,
+            itemBuilder: (item) => RadioButtonBuilder(
+              item,
+            ),
+          ),
         ),
         const SizedBox(
           height: defaultPadding,
@@ -103,6 +125,7 @@ class _UpdateFlatState extends State<UpdateFlat> {
                   }
                   widget.flat.buitlUpArea = _builtUpCtrl.text;
                   widget.flat.carpetArea = _carpetCtrl.text;
+                  widget.flat.type = _flatType;
                   await _api.updateFlat(widget.flat).then((value) {
                     if (value) {
                       Navigator.of(context).pop();

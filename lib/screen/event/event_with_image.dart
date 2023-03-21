@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/screen/event/event_detail.dart';
+import 'package:maxsociety/screen/event/event_screen.dart';
 import 'package:maxsociety/util/datetime_formatter.dart';
 
 import '../../util/colors.dart';
@@ -10,9 +11,11 @@ import '../../util/theme.dart';
 
 class EventWithImage extends StatelessWidget {
   final CircularModel circular;
+  final Function() notifyParent;
   const EventWithImage({
     super.key,
     required this.circular,
+    required this.notifyParent,
   });
 
   @override
@@ -83,8 +86,10 @@ class EventWithImage extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(EventDetail.routePath,
-                  arguments: circular.circularId.toString());
+              Navigator.of(context)
+                  .pushNamed(EventDetail.routePath,
+                      arguments: circular.circularId.toString())
+                  .then((value) => notifyParent());
             },
             child: CachedNetworkImage(
               imageUrl: circular.circularImages?.first.imageUrl ?? '',

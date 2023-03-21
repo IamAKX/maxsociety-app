@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:maxsociety/model/gallery_model.dart';
+import 'package:maxsociety/util/datetime_formatter.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -94,14 +95,38 @@ class _PhotoGalleryState extends State<PhotoGallery> {
             onLongPress: () {
               showDeletePopup(context, list.elementAt(index));
             },
-            child: CachedNetworkImage(
-              imageUrl: list.elementAt(index).galleryItemPath ?? '',
-              fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  const Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Image.asset(
-                'assets/image/404.jpg',
-              ),
+            child: Stack(
+              fit: StackFit.passthrough,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: list.elementAt(index).galleryItemPath ?? '',
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Image.asset(
+                    'assets/image/404.jpg',
+                  ),
+                ),
+                Positioned(
+                  bottom: 5,
+                  left: 5,
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Text(
+                      eventTimesAgoShort(
+                        list.elementAt(index).createdOn ?? '',
+                      ),
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           childCount: list.length,

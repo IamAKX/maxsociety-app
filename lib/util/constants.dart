@@ -28,6 +28,7 @@ List<String> relationshipList = [
   'BROTHER',
   'SISTER',
   'TENANT',
+  'SPOUSE',
   'OTHER'
 ];
 
@@ -64,14 +65,15 @@ List<String> flatFormat2 = [
   'A-3003',
 ];
 
+List<String> flatTypeList = ['RESIDENTIAL', 'COMMERCIAL'];
+
 List<UserRole> adminRole = [
   UserRole(name: 'AUDITOR', id: 1),
   UserRole(name: 'ADMIN', id: 2),
-  UserRole(name: 'MEMBER', id: 3),
 ];
 List<UserRole> auditorRole = [
   UserRole(name: 'AUDITOR', id: 1),
-  UserRole(name: 'MEMBER', id: 3),
+  UserRole(name: 'ADMIN', id: 2),
 ];
 List<UserRole> memberRole = [
   UserRole(name: 'MEMBER', id: 3),

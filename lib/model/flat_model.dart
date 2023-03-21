@@ -11,6 +11,7 @@ class FlatModel {
   String? buitlUpArea;
   String? carpetArea;
   String? flatNo;
+  String? type;
   List<VehicleModel>? vehicles;
   FlatModel({
     this.floor,
@@ -19,6 +20,7 @@ class FlatModel {
     this.buitlUpArea,
     this.carpetArea,
     this.flatNo,
+    this.type,
     this.vehicles,
   });
 
@@ -29,6 +31,7 @@ class FlatModel {
     String? buitlUpArea,
     String? carpetArea,
     String? flatNo,
+    String? type,
     List<VehicleModel>? vehicles,
   }) {
     return FlatModel(
@@ -38,6 +41,7 @@ class FlatModel {
       buitlUpArea: buitlUpArea ?? this.buitlUpArea,
       carpetArea: carpetArea ?? this.carpetArea,
       flatNo: flatNo ?? this.flatNo,
+      type: type ?? this.type,
       vehicles: vehicles ?? this.vehicles,
     );
   }
@@ -50,6 +54,7 @@ class FlatModel {
       'buitlUpArea': buitlUpArea,
       'carpetArea': carpetArea,
       'flatNo': flatNo,
+      'type': type,
       'vehicles': vehicles?.map((x) => x?.toMap())?.toList(),
     };
   }
@@ -62,41 +67,48 @@ class FlatModel {
       buitlUpArea: map['buitlUpArea'],
       carpetArea: map['carpetArea'],
       flatNo: map['flatNo'],
-      vehicles: map['vehicles'] != null ? List<VehicleModel>.from(map['vehicles']?.map((x) => VehicleModel.fromMap(x))) : null,
+      type: map['type'],
+      vehicles: map['vehicles'] != null
+          ? List<VehicleModel>.from(
+              map['vehicles']?.map((x) => VehicleModel.fromMap(x)))
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory FlatModel.fromJson(String source) => FlatModel.fromMap(json.decode(source));
+  factory FlatModel.fromJson(String source) =>
+      FlatModel.fromMap(json.decode(source));
 
   @override
   String toString() {
-    return 'FlatModel(floor: $floor, wing: $wing, tower: $tower, buitlUpArea: $buitlUpArea, carpetArea: $carpetArea, flatNo: $flatNo, vehicles: $vehicles)';
+    return 'FlatModel(floor: $floor, wing: $wing, tower: $tower, buitlUpArea: $buitlUpArea, carpetArea: $carpetArea, flatNo: $flatNo, type: $type, vehicles: $vehicles)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is FlatModel &&
-      other.floor == floor &&
-      other.wing == wing &&
-      other.tower == tower &&
-      other.buitlUpArea == buitlUpArea &&
-      other.carpetArea == carpetArea &&
-      other.flatNo == flatNo &&
-      listEquals(other.vehicles, vehicles);
+        other.floor == floor &&
+        other.wing == wing &&
+        other.tower == tower &&
+        other.buitlUpArea == buitlUpArea &&
+        other.carpetArea == carpetArea &&
+        other.flatNo == flatNo &&
+        other.type == type &&
+        listEquals(other.vehicles, vehicles);
   }
 
   @override
   int get hashCode {
     return floor.hashCode ^
-      wing.hashCode ^
-      tower.hashCode ^
-      buitlUpArea.hashCode ^
-      carpetArea.hashCode ^
-      flatNo.hashCode ^
-      vehicles.hashCode;
+        wing.hashCode ^
+        tower.hashCode ^
+        buitlUpArea.hashCode ^
+        carpetArea.hashCode ^
+        flatNo.hashCode ^
+        type.hashCode ^
+        vehicles.hashCode;
   }
 }

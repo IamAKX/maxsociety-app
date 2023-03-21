@@ -96,9 +96,10 @@ class _SocietyRuleScreenState extends State<SocietyRuleScreen> {
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              Navigator.of(context).pushNamed(
-                  SocietyRuleDetailsScreen.routePath,
-                  arguments: circularList.elementAt(index).circularId);
+              Navigator.of(context)
+                  .pushNamed(SocietyRuleDetailsScreen.routePath,
+                      arguments: circularList.elementAt(index).circularId)
+                  .then((value) => loadCirculars());
             },
           );
         },

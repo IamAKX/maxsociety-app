@@ -110,7 +110,25 @@ class _GovermentCircularScreenState extends State<GovermentCircularScreen> {
               'Uploaded on ${eventDateToDate(circularList.elementAt(index).eventDate ?? '')}',
               maxLines: 2,
             ),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isAdminUser())
+                  IconButton(
+                    onPressed: () {
+                      _api
+                          .deleteCircular(
+                              circularList.elementAt(index).circularId ?? 0)
+                          .then((value) => loadCirculars());
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                  ),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
             onTap: () {
               Navigator.of(context).pushNamed(PDFViewer.routePath,
                   arguments: circularList

@@ -13,6 +13,7 @@ import '../../model/user_profile_model.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
 import '../../util/colors.dart';
+import '../../util/helper_methods.dart';
 import '../../util/messages.dart';
 import '../../util/preference_key.dart';
 import '../../util/theme.dart';
@@ -49,7 +50,6 @@ class _EventDetailState extends State<EventDetail> {
   loadCircular() async {
     await _api.getCircularById(widget.circularId).then((value) {
       setState(() {
-      
         circular = value;
         isTextOnly = circular?.circularImages?.isEmpty ?? true;
       });
@@ -63,6 +63,21 @@ class _EventDetailState extends State<EventDetail> {
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'Details'),
+        actions: [
+          if (isAdminUser() ||
+              (userProfile.userId == (circular?.createdBy?.userId ?? '')))
+            IconButton(
+              onPressed: () {
+                _api
+                    .deleteCircular(circular?.circularId ?? 0)
+                    .then((value) => Navigator.of(context).pop());
+              },
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+            )
+        ],
       ),
       body: getBody(context),
     );

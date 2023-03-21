@@ -9,6 +9,7 @@ import '../../model/user_profile_model.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
 import '../../util/colors.dart';
+import '../../util/helper_methods.dart';
 import '../../util/messages.dart';
 import '../../util/preference_key.dart';
 import '../../util/theme.dart';
@@ -53,6 +54,20 @@ class _MomDetailScreenState extends State<MomDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Heading(title: 'MOM #${circular?.circularNo}'),
+        actions: [
+          if (isAdminUser())
+            IconButton(
+              onPressed: () {
+                _api
+                    .deleteCircular(circular?.circularId ?? 0)
+                    .then((value) => Navigator.of(context).pop());
+              },
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+            )
+        ],
       ),
       body: getBody(context),
     );

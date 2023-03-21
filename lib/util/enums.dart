@@ -22,7 +22,10 @@ enum StorageFolders {
   vehicle,
   societyBanner,
   thumbnail,
-  serviceRequest
+  serviceRequest,
+  rule
 }
 
 enum GalleryItemType { IMAGE, VIDEO }
+
+enum FlatType { RESIDENTIAL, COMMERCIAL }

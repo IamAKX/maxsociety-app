@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
 import '../../util/colors.dart';
+import '../../util/enums.dart';
 import '../../widget/heading.dart';
 
 class FlatScreen extends StatefulWidget {
@@ -75,6 +76,9 @@ class _FlatScreenState extends State<FlatScreen> {
           },
           child: Container(
             decoration: BoxDecoration(
+              color: flatList.elementAt(index).type == FlatType.COMMERCIAL.name
+                  ? Colors.amber.withOpacity(0.1)
+                  : Colors.white,
               border: Border.all(color: dividerColor),
               borderRadius: BorderRadius.circular(4),
             ),

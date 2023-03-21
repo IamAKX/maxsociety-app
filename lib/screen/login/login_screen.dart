@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:maxsociety/main.dart';
 import 'package:maxsociety/screen/forgot_password/forgot_password_screen.dart';
 import 'package:maxsociety/screen/login/login_message.dart';
 import 'package:maxsociety/screen/login/notice_row.dart';
 import 'package:maxsociety/util/colors.dart';
+import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/button_active.dart';
 import 'package:maxsociety/widget/custom_textfield.dart';
@@ -73,7 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 .loginUserWithEmailAndPassword(
                     _emailCtrl.text.trim(), _passwordCtrl.text.trim())
                 .then((value) {
-              if (_auth.status == AuthStatus.authenticated) {
+              if (_auth.status == AuthStatus.authenticated &&
+                  prefs.containsKey(PreferenceKey.user)) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     MainContainer.routePath, (route) => false);
               }

@@ -237,7 +237,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
               }
             });
           },
-          label: _api.status == ApiStatus.loading ? 'Please wait...' : 'Create',
+          label: _api.status == ApiStatus.loading  || isImageUploading? 'Please wait...' : 'Create',
           isDisabled: _api.status == ApiStatus.loading || isImageUploading,
         )
       ],

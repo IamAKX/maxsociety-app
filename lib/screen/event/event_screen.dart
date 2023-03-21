@@ -124,6 +124,11 @@ class _EventScreenState extends State<EventScreen> {
   }
 
   getBody(BuildContext context) {
+    if (_api.status == ApiStatus.loading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     if (_api.status == ApiStatus.failed) {
       return Center(
         child: Text(
@@ -138,10 +143,12 @@ class _EventScreenState extends State<EventScreen> {
         if (circularList.elementAt(index).circularImages?.isNotEmpty ?? false) {
           return EventWithImage(
             circular: circularList.elementAt(index),
+            notifyParent: loadCirculars,
           );
         } else {
           return EventWithoutImage(
             circular: circularList.elementAt(index),
+            notifyParent: loadCirculars,
           );
         }
       },

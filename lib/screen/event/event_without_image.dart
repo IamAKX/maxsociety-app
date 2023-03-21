@@ -12,9 +12,11 @@ import 'event_detail.dart';
 
 class EventWithoutImage extends StatelessWidget {
   final CircularModel circular;
+  final Function() notifyParent;
   const EventWithoutImage({
     super.key,
     required this.circular,
+    required this.notifyParent,
   });
 
   @override
@@ -85,8 +87,10 @@ class EventWithoutImage extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(EventDetail.routePath,
-                  arguments: circular.circularId.toString());
+              Navigator.of(context)
+                  .pushNamed(EventDetail.routePath,
+                      arguments: circular.circularId.toString())
+                  .then((value) => notifyParent());
             },
             child: Container(
               width: double.infinity,

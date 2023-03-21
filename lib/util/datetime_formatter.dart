@@ -79,6 +79,15 @@ String eventTimesAgo(String date) {
   }
 }
 
+String eventTimesAgoShort(String date) {
+  try {
+    DateTime dateTime = DateFormat(serverTimestampFormat).parse(date);
+    return timeago.format(dateTime, locale: 'en_short');
+  } catch (e) {
+    return '';
+  }
+}
+
 String reportDateFormat(String date) {
   try {
     String dateFormat = 'dd MMM, yyyy  hh:mm aa';

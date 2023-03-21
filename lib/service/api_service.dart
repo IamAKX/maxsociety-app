@@ -1067,4 +1067,30 @@ class ApiProvider extends ChangeNotifier {
     }
     return userList;
   }
+
+  Future<bool> deleteCircular(int circularNo) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.delete(
+        '${Api.updateCirculars}$circularNo',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 204) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess('Deleted');
+        return true;
+      }
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
 }

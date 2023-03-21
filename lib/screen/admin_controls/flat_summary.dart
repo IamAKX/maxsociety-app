@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/util/colors.dart';
+import 'package:maxsociety/util/enums.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/button_active.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +43,10 @@ class _FlatSummaryState extends State<FlatSummary> {
             itemBuilder: (context, index) => Center(
               child: Container(
                 decoration: BoxDecoration(
+                  color: widget.flatList.elementAt(index).type ==
+                          FlatType.COMMERCIAL.name
+                      ? Colors.amber.withOpacity(0.1)
+                      : Colors.white,
                   border: Border.all(color: dividerColor),
                   borderRadius: BorderRadius.circular(4),
                 ),

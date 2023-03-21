@@ -38,6 +38,7 @@ import 'package:maxsociety/widget/video_viewer.dart';
 
 import '../screen/admin_controls/update_flat.dart';
 import '../screen/appintro/app_intro_screen.dart';
+import '../screen/profile/change_password_screen.dart';
 import '../screen/service_request/all_service_request.dart';
 import '../screen/service_request/create_service_request.dart';
 import '../screen/society/society_rule_screen.dart';
@@ -51,6 +52,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case ForgotPasswordScreen.routePath:
         return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
+      case ChangePasswordScreen.routePath:
+        return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
       case MainContainer.routePath:
         return MaterialPageRoute(builder: (_) => const MainContainer());
       case EventDetail.routePath:

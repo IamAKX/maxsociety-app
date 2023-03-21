@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -9,9 +11,11 @@ import '../../main.dart';
 import '../../model/user_profile_model.dart';
 import '../../service/api_service.dart';
 import '../../service/snakbar_service.dart';
+import '../../service/storage_service.dart';
 import '../../util/colors.dart';
 import '../../util/datetime_formatter.dart';
 import '../../util/enums.dart';
+import '../../util/helper_methods.dart';
 import '../../util/preference_key.dart';
 import '../../widget/button_active.dart';
 import '../../widget/heading.dart';
@@ -30,6 +34,10 @@ class _CreateRuleScreenState extends State<CreateRuleScreen> {
   late ApiProvider _api;
   UserProfile userProfile =
       UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
+
+  bool isImageSelected = false;
+  bool isImageUploading = false;
+  File? imageFile;
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +133,57 @@ class _CreateRuleScreenState extends State<CreateRuleScreen> {
         const SizedBox(
           height: defaultPadding,
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Add Attachment (Optinal)',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            isImageSelected
+                ? TextButton(
+                    onPressed: () {
+                      setState(() {
+                        imageFile = null;
+                        isImageSelected = false;
+                      });
+                    },
+                    child: Text(
+                      'Delete',
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Colors.red,
+                          ),
+                    ),
+                  )
+                : TextButton(
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        imageFile = File(image.path);
+
+                        setState(() {
+                          isImageSelected = true;
+                        });
+                      }
+                    },
+                    child: const Text('Add'),
+                  )
+          ],
+        ),
+        Visibility(
+          visible: isImageSelected,
+          child: Text(getFileName(imageFile)),
+        ),
+        const SizedBox(
+          height: defaultPadding / 2,
+        ),
+        const SizedBox(
+          height: defaultPadding,
+        ),
         ActiveButton(
           onPressed: () async {
             if (_titleCtrl.text.isEmpty || _descCtrl.text.isEmpty) {
@@ -145,6 +204,23 @@ class _CreateRuleScreenState extends State<CreateRuleScreen> {
                   .showSnackBarError('Select effective date');
               return;
             }
+
+            String imageUrl = '';
+            if (imageFile != null) {
+              SnackBarService.instance
+                  .showSnackBarInfo('Uploading file, please wait');
+              setState(() {
+                isImageUploading = true;
+              });
+              imageUrl = await StorageService.uploadEventImage(
+                imageFile!,
+                getFileName(imageFile),
+                StorageFolders.rule.name,
+              );
+              setState(() {
+                isImageUploading = false;
+              });
+            }
             var createCircularReqBody = {
               'subject': _titleCtrl.text,
               'circularText': _descCtrl.text,
@@ -156,7 +232,7 @@ class _CreateRuleScreenState extends State<CreateRuleScreen> {
               'circularType': CircularType.SOCIETY_RULE.name,
               'circularStatus': CircularStatus.OPEN.name,
               'circularCategory': '',
-              'circularImages': [],
+              'circularImages': imageUrl.trim().isEmpty ? [] : [imageUrl],
               'eventDate': effectiveDate,
               'showEventDate': true,
             };
@@ -166,8 +242,10 @@ class _CreateRuleScreenState extends State<CreateRuleScreen> {
               }
             });
           },
-          label: _api.status == ApiStatus.loading ? 'Please wait...' : 'Create',
-          isDisabled: _api.status == ApiStatus.loading,
+          label: _api.status == ApiStatus.loading || isImageUploading
+              ? 'Please wait...'
+              : 'Create',
+          isDisabled: _api.status == ApiStatus.loading || isImageUploading,
         )
       ],
     );

@@ -25,6 +25,7 @@ import '../../service/snakbar_service.dart';
 import '../../service/storage_service.dart';
 import '../../util/enums.dart';
 import '../../util/helper_methods.dart';
+import 'change_password_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -83,6 +84,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       icon: Icons.group_outlined,
       title: 'Family',
       navigatorRoute: FamilyScreen.routePath,
+    ),
+    ProfileMenuModel(
+      icon: Icons.lock_outline,
+      title: 'Change Password',
+      navigatorRoute: ChangePasswordScreen.routePath,
     ),
   ];
 
