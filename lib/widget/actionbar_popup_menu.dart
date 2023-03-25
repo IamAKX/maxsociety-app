@@ -5,6 +5,7 @@ import 'package:maxsociety/util/theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
+import '../service/db_service.dart';
 import '../util/preference_key.dart';
 
 class ActionbarPopupMenu extends StatefulWidget {
@@ -18,20 +19,24 @@ class _ActionbarPopupMenuState extends State<ActionbarPopupMenu> {
   AppMetadataModel? appMetadataModel;
   @override
   Widget build(BuildContext context) {
-    appMetadataModel =
-        AppMetadataModel.fromJson(prefs.getString(PreferenceKey.metadata)!);
-    return PopupMenuButton(
-      position: PopupMenuPosition.under,
-      onSelected: (value) {
-        _onMenuItemSelected(value as int);
-      },
-      itemBuilder: (ctx) => [
-        _buildPopupMenuItem('Contact Us', Icons.support_agent_outlined, 0),
-        _buildPopupMenuItem('Share App', Icons.share_outlined, 1),
-        _buildPopupMenuItem('Rate us', Icons.rate_review_outlined, 2),
-        _buildPopupMenuItem('Terms', Icons.list_outlined, 3),
-        _buildPopupMenuItem('Privacy Policy', Icons.shield_outlined, 4),
-      ],
+    if (prefs.containsKey(PreferenceKey.metadata)) {
+      appMetadataModel =
+          AppMetadataModel.fromJson(prefs.getString(PreferenceKey.metadata)!);
+    }
+    return SizedBox(
+      child: PopupMenuButton(
+        position: PopupMenuPosition.under,
+        onSelected: (value) {
+          _onMenuItemSelected(value as int);
+        },
+        itemBuilder: (ctx) => [
+          _buildPopupMenuItem('Contact Us', Icons.support_agent_outlined, 0),
+          _buildPopupMenuItem('Share App', Icons.share_outlined, 1),
+          _buildPopupMenuItem('Rate us', Icons.rate_review_outlined, 2),
+          _buildPopupMenuItem('Terms', Icons.list_outlined, 3),
+          _buildPopupMenuItem('Privacy Policy', Icons.shield_outlined, 4),
+        ],
+      ),
     );
   }
 
@@ -54,6 +59,11 @@ class _ActionbarPopupMenuState extends State<ActionbarPopupMenu> {
   }
 
   _onMenuItemSelected(int value) async {
+    if (!prefs.containsKey(PreferenceKey.metadata)) {
+      await DBService.instance.getAppMetadata().then((value) {
+        setState(() {});
+      });
+    }
     switch (value) {
       case 0:
         if (appMetadataModel?.contactNo?.isNotEmpty ?? false) {

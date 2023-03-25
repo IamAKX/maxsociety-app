@@ -6,6 +6,8 @@ import 'package:maxsociety/screen/profile/profile_screen.dart';
 import 'package:maxsociety/screen/service_request/service_request_screen.dart';
 import 'package:maxsociety/screen/society/society_screen.dart';
 
+import '../service/db_service.dart';
+
 class MainContainer extends StatefulWidget {
   const MainContainer({super.key});
   static const String routePath = '/mainContainer';
@@ -31,6 +33,17 @@ class _MainContainerState extends State<MainContainer> {
       default:
         return const EventScreen();
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadMetaData();
+  }
+
+  loadMetaData() async {
+    await DBService.instance.getAppMetadata();
   }
 
   @override

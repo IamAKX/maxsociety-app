@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:maxsociety/main.dart';
 import 'package:maxsociety/model/app_metadata_model.dart';
@@ -19,6 +21,7 @@ class DBService {
     metadataList = querySnapshot.docs
         .map((metadata) => AppMetadataModel.fromMap(metadata.data()))
         .toList();
+    log(metadataList.first.toJson());
     prefs.setString(PreferenceKey.metadata, metadataList.first.toJson());
     return true;
   }

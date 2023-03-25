@@ -26,7 +26,7 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  UserProfile userProfile =
+  UserProfile? userProfile =
       UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
   late ApiProvider _api;
   List<CircularModel> circularList = [];
@@ -56,7 +56,7 @@ class _EventScreenState extends State<EventScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            (userProfile.imagePath?.isEmpty ?? true)
+            (userProfile?.imagePath?.isEmpty ?? true)
                 ? Image.asset(
                     'assets/image/user.png',
                     width: homePageUserIconSize,
@@ -65,7 +65,7 @@ class _EventScreenState extends State<EventScreen> {
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(homePageUserIconSize),
                     child: CachedNetworkImage(
-                      imageUrl: userProfile.imagePath ?? '',
+                      imageUrl: userProfile?.imagePath ?? '',
                       width: homePageUserIconSize,
                       height: homePageUserIconSize,
                       fit: BoxFit.cover,
@@ -91,13 +91,13 @@ class _EventScreenState extends State<EventScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Hi ${userProfile.userName?.split(' ')[0]}!',
+                  'Hi ${userProfile?.userName?.split(' ')[0]}!',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
                 Text(
-                  'Flat ${userProfile.flats?.flatNo ?? ''}',
+                  'Flat ${userProfile?.flats?.flatNo ?? ''}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
