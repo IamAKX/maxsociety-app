@@ -37,7 +37,9 @@ class ApiProvider extends ChangeNotifier {
     notifyListeners();
     try {
       var map = userProfile.toMap();
-      map['flats'] = {'flatNo': userProfile.flats?.flatNo ?? ''};
+      if (userProfile.flats != null) {
+        map['flats'] = {'flatNo': userProfile.flats?.flatNo ?? ''};
+      }
       Response response = await _dio.post(
         Api.createUser,
         data: json.encode(map),

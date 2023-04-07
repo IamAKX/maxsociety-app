@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:maxsociety/screen/admin_controls/community_member_list.dart';
 import 'package:maxsociety/screen/admin_controls/create_flat.dart';
 import 'package:maxsociety/screen/admin_controls/flat_screen.dart';
+import 'package:maxsociety/screen/admin_controls/security_guard_list.dart';
 import 'package:maxsociety/screen/admin_controls/society_details.dart';
 import 'package:maxsociety/screen/admin_controls/society_member_list.dart';
 import 'package:maxsociety/screen/report/report_screen.dart';
@@ -46,6 +47,10 @@ class _AdminControlsScreenState extends State<AdminControlsScreen> {
         icon: Icons.person_pin_outlined,
         navigatorRoute: CommunityMemberListScreen.routePath,
         title: 'Committee Member'),
+    SocietyMenuModel(
+        icon: Icons.person_4_outlined,
+        navigatorRoute: SecurityMemberListScreen.routePath,
+        title: 'Security Guard'),
     SocietyMenuModel(
       icon: Icons.receipt_long_rounded,
       navigatorRoute: ReportScreen.routePath,

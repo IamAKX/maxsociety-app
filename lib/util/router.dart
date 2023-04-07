@@ -6,9 +6,11 @@ import 'package:maxsociety/screen/admin_controls/create_community_member.dart';
 import 'package:maxsociety/screen/admin_controls/create_flat.dart';
 import 'package:maxsociety/screen/admin_controls/create_mom_screen.dart';
 import 'package:maxsociety/screen/admin_controls/create_rule_screen.dart';
+import 'package:maxsociety/screen/admin_controls/create_security_member.dart';
 import 'package:maxsociety/screen/admin_controls/create_society_member.dart';
 import 'package:maxsociety/screen/admin_controls/flat_screen.dart';
 import 'package:maxsociety/screen/admin_controls/flat_summary.dart';
+import 'package:maxsociety/screen/admin_controls/security_guard_list.dart';
 import 'package:maxsociety/screen/admin_controls/society_details.dart';
 import 'package:maxsociety/screen/admin_controls/society_member_list.dart';
 import 'package:maxsociety/screen/admin_controls/user_detail_screen.dart';
@@ -134,8 +136,13 @@ class NavRoute {
       case CommunityMemberListScreen.routePath:
         return MaterialPageRoute(
             builder: (_) => const CommunityMemberListScreen());
+      case SecurityMemberListScreen.routePath:
+        return MaterialPageRoute(
+            builder: (_) => const SecurityMemberListScreen());
       case CreateCommitteeMember.routePath:
         return MaterialPageRoute(builder: (_) => const CreateCommitteeMember());
+      case CreateSecurityMember.routePath:
+        return MaterialPageRoute(builder: (_) => const CreateSecurityMember());
       case CreateEventScreen.routePath:
         return MaterialPageRoute(builder: (_) => const CreateEventScreen());
       case CreateRuleScreen.routePath:

@@ -78,5 +78,8 @@ List<UserRole> auditorRole = [
 List<UserRole> memberRole = [
   UserRole(name: 'MEMBER', id: 3),
 ];
+List<UserRole> guardRole = [
+  UserRole(name: 'GUARD', id: 4),
+];
 
 String userDefaultRelationship = 'SELF';
