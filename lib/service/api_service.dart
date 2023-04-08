@@ -74,7 +74,9 @@ class ApiProvider extends ChangeNotifier {
     notifyListeners();
     try {
       var map = userProfile.toMap();
-      map['flats'] = {'flatNo': userProfile.flats?.flatNo};
+      if (userProfile.flats != null) {
+        map['flats'] = {'flatNo': userProfile.flats?.flatNo};
+      }
       var reqBody = json.encode(map);
       log(reqBody);
       Response response = await _dio.put(
@@ -88,7 +90,9 @@ class ApiProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         status = ApiStatus.success;
         notifyListeners();
+
         SnackBarService.instance.showSnackBarSuccess('Profile updated');
+
         return true;
       }
     } on DioError catch (e) {
@@ -102,6 +106,48 @@ class ApiProvider extends ChangeNotifier {
       status = ApiStatus.failed;
       notifyListeners();
       SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> updateUserSilently(UserProfile userProfile) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      var map = userProfile.toMap();
+      if (userProfile.flats != null) {
+        map['flats'] = {'flatNo': userProfile.flats?.flatNo};
+      }
+      var reqBody = json.encode(map);
+      log(reqBody);
+      Response response = await _dio.put(
+        Api.updateUser,
+        data: reqBody,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      log(json.encode(response.data));
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        UserProfile user = UserProfile.fromMap(response.data['data']);
+        log('saving : ${user.toJson()}');
+        prefs.setString(PreferenceKey.user, user.toJson());
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      log('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      log(e.toString());
       log(e.toString());
     }
     return false;

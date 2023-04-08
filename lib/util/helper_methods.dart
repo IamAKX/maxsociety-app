@@ -36,7 +36,8 @@ getCircularStatusColor(String status) {
 bool isAdminUser() {
   UserProfile userProfile =
       UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
-  if (userProfile.roles!.any((element) => element.name == 'MEMBER')) {
+  if (userProfile.roles!.any(
+      (element) => (element.name == 'MEMBER') || (element.name == 'GUARD'))) {
     return false;
   }
   return true;

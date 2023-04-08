@@ -80,6 +80,11 @@ class AuthProvider extends ChangeNotifier {
         UserProfile userProfile =
             await ApiProvider.instance.getUserById(user!.uid);
         prefs.setString(PreferenceKey.user, userProfile.toJson());
+
+        if (prefs.containsKey(PreferenceKey.fcmToken)) {
+          userProfile.fcmToken = prefs.getString(PreferenceKey.fcmToken);
+          await ApiProvider.instance.updateUserSilently(userProfile);
+        }
         status = AuthStatus.authenticated;
       }
       notifyListeners();

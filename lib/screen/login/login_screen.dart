@@ -75,6 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 .loginUserWithEmailAndPassword(
                     _emailCtrl.text.trim(), _passwordCtrl.text.trim())
                 .then((value) {
+                  
               if (_auth.status == AuthStatus.authenticated &&
                   prefs.containsKey(PreferenceKey.user)) {
                 Navigator.of(context).pushNamedAndRemoveUntil(

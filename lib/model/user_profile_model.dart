@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/user_role.dart';
-import 'package:maxsociety/model/vehicle_model.dart';
 
 class UserProfile {
   String? userId;
@@ -22,6 +21,7 @@ class UserProfile {
   String? createdOn;
   String? updatedOn;
   int? familyMembersCount;
+  String? fcmToken;
   UserProfile({
     this.userId,
     this.userName,
@@ -38,6 +38,7 @@ class UserProfile {
     this.createdOn,
     this.updatedOn,
     this.familyMembersCount,
+    this.fcmToken,
   });
 
   UserProfile copyWith({
@@ -56,6 +57,7 @@ class UserProfile {
     String? createdOn,
     String? updatedOn,
     int? familyMembersCount,
+    String? fcmToken,
   }) {
     return UserProfile(
       userId: userId ?? this.userId,
@@ -73,6 +75,7 @@ class UserProfile {
       createdOn: createdOn ?? this.createdOn,
       updatedOn: updatedOn ?? this.updatedOn,
       familyMembersCount: familyMembersCount ?? this.familyMembersCount,
+      fcmToken: fcmToken ?? this.fcmToken,
     );
   }
 
@@ -93,6 +96,7 @@ class UserProfile {
       'createdOn': createdOn,
       'updatedOn': updatedOn,
       'familyMembersCount': familyMembersCount,
+      'fcmToken': fcmToken,
     };
   }
 
@@ -115,6 +119,7 @@ class UserProfile {
       createdOn: map['createdOn'],
       updatedOn: map['updatedOn'],
       familyMembersCount: map['familyMembersCount']?.toInt(),
+      fcmToken: map['fcmToken'],
     );
   }
 
@@ -125,7 +130,7 @@ class UserProfile {
 
   @override
   String toString() {
-    return 'UserProfile(userId: $userId, userName: $userName, relationship: $relationship, mobileNo: $mobileNo, gender: $gender, dob: $dob, email: $email, imagePath: $imagePath, flats: $flats, roles: $roles, designation: $designation, category: $category, createdOn: $createdOn, updatedOn: $updatedOn, familyMembersCount: $familyMembersCount)';
+    return 'UserProfile(userId: $userId, userName: $userName, relationship: $relationship, mobileNo: $mobileNo, gender: $gender, dob: $dob, email: $email, imagePath: $imagePath, flats: $flats, roles: $roles, designation: $designation, category: $category, createdOn: $createdOn, updatedOn: $updatedOn, familyMembersCount: $familyMembersCount, fcmToken: $fcmToken)';
   }
 
   @override
@@ -147,7 +152,8 @@ class UserProfile {
         other.category == category &&
         other.createdOn == createdOn &&
         other.updatedOn == updatedOn &&
-        other.familyMembersCount == familyMembersCount;
+        other.familyMembersCount == familyMembersCount &&
+        other.fcmToken == fcmToken;
   }
 
   @override
@@ -166,6 +172,7 @@ class UserProfile {
         category.hashCode ^
         createdOn.hashCode ^
         updatedOn.hashCode ^
-        familyMembersCount.hashCode;
+        familyMembersCount.hashCode ^
+        fcmToken.hashCode;
   }
 }
