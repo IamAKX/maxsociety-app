@@ -75,16 +75,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: 'Profile Details',
       navigatorRoute: ProfileDetailUpdateScreen.routePath,
     ),
-    ProfileMenuModel(
-      icon: Icons.car_crash_outlined,
-      title: 'Vehicle',
-      navigatorRoute: VehicleScreen.routePath,
-    ),
-    ProfileMenuModel(
-      icon: Icons.group_outlined,
-      title: 'Family',
-      navigatorRoute: FamilyScreen.routePath,
-    ),
+    if (!isGuardUser())
+      ProfileMenuModel(
+        icon: Icons.car_crash_outlined,
+        title: 'Vehicle',
+        navigatorRoute: VehicleScreen.routePath,
+      ),
+    if (!isGuardUser())
+      ProfileMenuModel(
+        icon: Icons.group_outlined,
+        title: 'Family',
+        navigatorRoute: FamilyScreen.routePath,
+      ),
     ProfileMenuModel(
       icon: Icons.lock_outline,
       title: 'Change Password',
@@ -98,6 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Column(
                 children: [
@@ -183,66 +186,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text(
                       userProfile?.email ?? '',
                       style: Theme.of(context).textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
                     ),
-                    Text(
-                      '${userProfile?.flats?.tower ?? '-'}   •   ${userProfile?.flats?.flatNo ?? '-'}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(
-                      height: defaultPadding / 2,
-                    ),
-                    const Divider(
-                      color: dividerColor,
-                      indent: defaultPadding,
-                      endIndent: defaultPadding,
-                      thickness: 1,
-                    ),
-                    const SizedBox(
-                      height: defaultPadding / 2,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                '${userProfile?.familyMembersCount ?? 0}',
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
-                              ),
-                              Text(
-                                'Family',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
+                    if (!isGuardUser()) ...{
+                      Text(
+                        '${userProfile?.flats?.tower ?? '-'}   •   ${userProfile?.flats?.flatNo ?? '-'}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(
+                        height: defaultPadding / 2,
+                      ),
+                      const Divider(
+                        color: dividerColor,
+                        indent: defaultPadding,
+                        endIndent: defaultPadding,
+                        thickness: 1,
+                      ),
+                      const SizedBox(
+                        height: defaultPadding / 2,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${userProfile?.familyMembersCount ?? 0}',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                ),
+                                Text(
+                                  'Family',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: defaultPadding * 2,
-                          color: dividerColor,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${userProfile?.flats?.vehicles?.length ?? 0}',
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
-                              ),
-                              Text(
-                                'Vehicle',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
+                          Container(
+                            width: 1,
+                            height: defaultPadding * 2,
+                            color: dividerColor,
                           ),
-                        )
-                      ],
-                    )
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${userProfile?.flats?.vehicles?.length ?? 0}',
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                ),
+                                Text(
+                                  'Vehicle',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+                    }
                   ],
                 ),
               )

@@ -25,6 +25,7 @@ import 'package:maxsociety/screen/profile/family_screen.dart';
 import 'package:maxsociety/screen/profile/profile_detail_update.dart';
 import 'package:maxsociety/screen/profile/vehicle_screen.dart';
 import 'package:maxsociety/screen/report/report_screen.dart';
+import 'package:maxsociety/screen/security_guard/guard_main_container.dart';
 import 'package:maxsociety/screen/service_request/service_request_details.dart';
 import 'package:maxsociety/screen/society/about_society.dart';
 import 'package:maxsociety/screen/admin_controls/admin_controls_screen.dart';
@@ -58,6 +59,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
       case MainContainer.routePath:
         return MaterialPageRoute(builder: (_) => const MainContainer());
+      case GuardMainContainer.routePath:
+        return MaterialPageRoute(builder: (_) => const GuardMainContainer());
       case EventDetail.routePath:
         return MaterialPageRoute(
           builder: (_) => EventDetail(

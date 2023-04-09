@@ -9,6 +9,7 @@ import 'package:maxsociety/model/app_metadata_model.dart';
 import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/appintro/app_intro_screen.dart';
+import 'package:maxsociety/screen/security_guard/guard_main_container.dart';
 import 'package:maxsociety/service/api_service.dart';
 import 'package:maxsociety/service/auth_service.dart';
 import 'package:maxsociety/service/db_service.dart';
@@ -167,7 +168,13 @@ class MyApp extends StatelessWidget {
   getStartUpScreen() {
     if (prefs.containsKey(PreferenceKey.user) &&
         (prefs.getString(PreferenceKey.user)?.isNotEmpty ?? false)) {
-      return const MainContainer();
+      UserProfile userProfile =
+          UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
+      if (userProfile.roles?.any((element) => element.id == 4) ?? false) {
+        return const GuardMainContainer();
+      } else {
+        return const MainContainer();
+      }
     } else {
       return const AppIntroScreen();
     }

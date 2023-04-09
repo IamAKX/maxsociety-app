@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -41,4 +42,13 @@ bool isAdminUser() {
     return false;
   }
   return true;
+}
+
+bool isGuardUser() {
+  UserProfile userProfile =
+      UserProfile.fromJson(prefs.getString(PreferenceKey.user)!);
+  if (userProfile.roles!.any((element) => (element.name == 'GUARD'))) {
+    return true;
+  }
+  return false;
 }

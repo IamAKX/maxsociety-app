@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:group_radio_button/group_radio_button.dart';
 import 'package:maxsociety/main.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
+import 'package:maxsociety/util/helper_methods.dart';
 import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/button_active.dart';
@@ -194,78 +195,80 @@ class _ProfileDetailUpdateScreenState extends State<ProfileDetailUpdateScreen> {
         const SizedBox(
           height: defaultPadding * 2,
         ),
-        Text(
-          'FLAT DETAILS',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+        if (!isGuardUser()) ...{
+          Text(
+            'FLAT DETAILS',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(
+            height: defaultPadding / 2,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  hint: 'Flat',
+                  controller: _flatNumberCtrl,
+                  keyboardType: TextInputType.none,
+                  obscure: false,
+                  enabled: false,
+                  icon: Icons.home_outlined,
+                ),
               ),
-        ),
-        const SizedBox(
-          height: defaultPadding / 2,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: CustomTextField(
-                hint: 'Flat',
-                controller: _flatNumberCtrl,
-                keyboardType: TextInputType.none,
-                obscure: false,
-                enabled: false,
-                icon: Icons.home_outlined,
+              const SizedBox(
+                width: defaultPadding / 2,
               ),
-            ),
-            const SizedBox(
-              width: defaultPadding / 2,
-            ),
-            Expanded(
-              child: CustomTextField(
-                hint: 'Floor',
-                controller: _floorNumberCtrl,
-                keyboardType: TextInputType.number,
-                obscure: false,
-                enabled: false,
-                icon: Icons.home_outlined,
+              Expanded(
+                child: CustomTextField(
+                  hint: 'Floor',
+                  controller: _floorNumberCtrl,
+                  keyboardType: TextInputType.number,
+                  obscure: false,
+                  enabled: false,
+                  icon: Icons.home_outlined,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: defaultPadding / 2,
-        ),
-        CustomTextField(
-          hint: 'Block or Wing',
-          controller: _blockCtrl,
-          keyboardType: TextInputType.name,
-          obscure: false,
-          enabled: false,
-          icon: Icons.home_outlined,
-        ),
-        const SizedBox(
-          height: defaultPadding / 2,
-        ),
-        CustomTextField(
-          hint: 'Super built-up area in sqft',
-          controller: _superBuiltUpAreaCtrl,
-          keyboardType: TextInputType.number,
-          obscure: false,
-          enabled: false,
-          icon: Icons.home_outlined,
-        ),
-        const SizedBox(
-          height: defaultPadding / 2,
-        ),
-        CustomTextField(
-          hint: 'Carpet area in sqft',
-          controller: _carpetAreaCtrl,
-          keyboardType: TextInputType.number,
-          obscure: false,
-          enabled: false,
-          icon: Icons.home_outlined,
-        ),
-        const SizedBox(
-          height: defaultPadding,
-        ),
+            ],
+          ),
+          const SizedBox(
+            height: defaultPadding / 2,
+          ),
+          CustomTextField(
+            hint: 'Block or Wing',
+            controller: _blockCtrl,
+            keyboardType: TextInputType.name,
+            obscure: false,
+            enabled: false,
+            icon: Icons.home_outlined,
+          ),
+          const SizedBox(
+            height: defaultPadding / 2,
+          ),
+          CustomTextField(
+            hint: 'Super built-up area in sqft',
+            controller: _superBuiltUpAreaCtrl,
+            keyboardType: TextInputType.number,
+            obscure: false,
+            enabled: false,
+            icon: Icons.home_outlined,
+          ),
+          const SizedBox(
+            height: defaultPadding / 2,
+          ),
+          CustomTextField(
+            hint: 'Carpet area in sqft',
+            controller: _carpetAreaCtrl,
+            keyboardType: TextInputType.number,
+            obscure: false,
+            enabled: false,
+            icon: Icons.home_outlined,
+          ),
+          const SizedBox(
+            height: defaultPadding,
+          ),
+        },
         ActiveButton(
           onPressed: () async {
             if (_nameCtrl.text.isEmpty ||
