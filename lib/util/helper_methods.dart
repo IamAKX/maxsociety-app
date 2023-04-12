@@ -18,6 +18,7 @@ String getFileExtension(File? file) {
 getCircularStatusColor(String status) {
   switch (status) {
     case 'OPEN':
+    case 'APPROVED':
       return Colors.green;
     case 'DRAFT':
       return Colors.blue;
@@ -28,6 +29,7 @@ getCircularStatusColor(String status) {
     case 'PUBLISHED':
       return Colors.brown;
     case 'CLOSED':
+    case 'REJECTED':
       return Colors.red;
     default:
       return textColorDark;

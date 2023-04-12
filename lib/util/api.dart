@@ -54,4 +54,10 @@ class Api {
       '${baseUrl}maxsociety/emergencyContacts';
   static const String deleteEmergencyContacts =
       '${baseUrl}maxsociety/emergencyContacts/';
+
+// notification
+  static const String getNotifications =
+      '${baseUrl}maxsociety/notifications/getNotifications';
+  static const String sendNotification =
+      '${baseUrl}maxsociety/notifications/sendNotification';
 }

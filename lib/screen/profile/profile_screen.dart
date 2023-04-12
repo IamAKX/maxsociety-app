@@ -104,22 +104,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Column(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(defaultPadding),
-                    child: CachedNetworkImage(
-                      imageUrl: userProfile?.imagePath ?? '',
-                      width: 120,
-                      height: 120,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          const Center(child: CircularProgressIndicator()),
-                      errorWidget: (context, url, error) => Image.asset(
-                        'assets/image/user_square.jpg',
+                  if (userProfile?.imagePath?.isNotEmpty ?? false)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(defaultPadding),
+                      child: CachedNetworkImage(
+                        imageUrl: userProfile?.imagePath ?? '',
                         width: 120,
                         height: 120,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/image/user_square.jpg',
+                          width: 120,
+                          height: 120,
+                        ),
                       ),
                     ),
-                  ),
                   TextButton(
                     onPressed:
                         isImageUploading || _api.status == ApiStatus.loading

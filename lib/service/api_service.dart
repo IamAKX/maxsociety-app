@@ -11,6 +11,7 @@ import 'package:maxsociety/model/list/emergency_contact_list_model.dart';
 import 'package:maxsociety/model/list/flat_list_model.dart';
 import 'package:maxsociety/model/list/gallery_list_model.dart';
 import 'package:maxsociety/model/list/user_list_model.dart';
+import 'package:maxsociety/model/list/visitor_record_list_model.dart';
 import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/model/vehicle_model.dart';
@@ -1133,6 +1134,73 @@ class ApiProvider extends ChangeNotifier {
         SnackBarService.instance.showSnackBarSuccess('Deleted');
         return true;
       }
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<VisitorRecordListModel> getAllVisitorRecord() async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late VisitorRecordListModel recordModel;
+    try {
+      Response response = await _dio.get(
+        Api.getNotifications,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        recordModel = VisitorRecordListModel.fromMap(response.data['data']);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return recordModel;
+  }
+
+  Future<bool> sendVisitorNotification(Map reqBody) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.post(
+        Api.sendNotification,
+        data: json.encode(reqBody),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess(response.data['message']);
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
     } catch (e) {
       status = ApiStatus.failed;
       notifyListeners();

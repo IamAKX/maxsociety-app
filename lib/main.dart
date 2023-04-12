@@ -85,8 +85,8 @@ setupFirebaseMessaging() async {
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (message.notification != null) {
-      publishNotification(
-          message.notification?.title ?? '', message.notification?.body ?? '');
+      publishNotification(message.notification?.title ?? '',
+          message.notification?.body ?? '', message.data);
     }
   });
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -97,11 +97,12 @@ setupFirebaseMessaging() async {
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  publishNotification(
-      message.notification?.title ?? '', message.notification?.body ?? '');
+  publishNotification(message.notification?.title ?? '',
+      message.notification?.body ?? '', message.data);
 }
 
-Future<void> publishNotification(String title, String body) async {
+Future<void> publishNotification(
+    String title, String body, Map<String, dynamic> data) async {
   // var androidPlatformChannelSpecifics =
   //     const AndroidNotificationDetails('channel_ID_iamsmart', 'channel name',
   //         channelDescription: 'channel description',
@@ -117,6 +118,7 @@ Future<void> publishNotification(String title, String body) async {
   //     android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
   // await flutterLocalNotificationsPlugin
   //     .show(0, title, body, platformChannelSpecifics, payload: 'test');
+  log('data : $data');
   if (navigatorKey.currentContext != null &&
       navigatorKey.currentState != null) {
     AwesomeDialog(

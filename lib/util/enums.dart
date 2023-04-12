@@ -29,3 +29,5 @@ enum StorageFolders {
 enum GalleryItemType { IMAGE, VIDEO }
 
 enum FlatType { RESIDENTIAL, COMMERCIAL }
+
+enum NotificationStatus { PENDING, APPROVED, REJECTED }

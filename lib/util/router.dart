@@ -25,6 +25,7 @@ import 'package:maxsociety/screen/profile/family_screen.dart';
 import 'package:maxsociety/screen/profile/profile_detail_update.dart';
 import 'package:maxsociety/screen/profile/vehicle_screen.dart';
 import 'package:maxsociety/screen/report/report_screen.dart';
+import 'package:maxsociety/screen/security_guard/flat_list_screen.dart';
 import 'package:maxsociety/screen/security_guard/guard_main_container.dart';
 import 'package:maxsociety/screen/service_request/service_request_details.dart';
 import 'package:maxsociety/screen/society/about_society.dart';
@@ -134,6 +135,8 @@ class NavRoute {
         );
       case FlatScreen.routePath:
         return MaterialPageRoute(builder: (_) => const FlatScreen());
+      case FlatListScreen.routePath:
+        return MaterialPageRoute(builder: (_) => const FlatListScreen());
       case SocietyDetails.routePath:
         return MaterialPageRoute(builder: (_) => const SocietyDetails());
       case CommunityMemberListScreen.routePath:
