@@ -105,6 +105,10 @@ class _EventScreenState extends State<EventScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.notifications_outlined),
+          ),
           TextButton(
             onPressed: () {
               Navigator.of(context)

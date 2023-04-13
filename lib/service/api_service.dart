@@ -121,7 +121,6 @@ class ApiProvider extends ChangeNotifier {
         map['flats'] = {'flatNo': userProfile.flats?.flatNo};
       }
       var reqBody = json.encode(map);
-      log(reqBody);
       Response response = await _dio.put(
         Api.updateUser,
         data: reqBody,
@@ -130,7 +129,6 @@ class ApiProvider extends ChangeNotifier {
           responseType: ResponseType.json,
         ),
       );
-      log(json.encode(response.data));
       if (response.statusCode == 200) {
         status = ApiStatus.success;
         notifyListeners();

@@ -25,6 +25,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 late SharedPreferences prefs;
+UserProfile? _userProfile;
 AppMetadataModel? appMetadata;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -57,7 +58,7 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-setupFirebaseMessaging() async {
+Future<void> setupFirebaseMessaging() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   String? fcmToken;
   await messaging.getToken().then((value) {
@@ -67,10 +68,10 @@ setupFirebaseMessaging() async {
   });
 
   if (prefs.containsKey(PreferenceKey.user)) {
-    UserProfile userProfile =
+    _userProfile =
         UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
-    userProfile.fcmToken = fcmToken ?? '';
-    await ApiProvider.instance.updateUserSilently(userProfile);
+    _userProfile?.fcmToken = fcmToken ?? '';
+    await ApiProvider.instance.updateUserSilently(_userProfile!);
     // UserProfile user =
     //     await ApiProvider.instance.getUserById(userProfile.userId!);
     // log(user.toJson());
@@ -168,11 +169,9 @@ class MyApp extends StatelessWidget {
   }
 
   getStartUpScreen() {
-    if (prefs.containsKey(PreferenceKey.user) &&
-        (prefs.getString(PreferenceKey.user)?.isNotEmpty ?? false)) {
-      UserProfile userProfile =
-          UserProfile.fromJson(prefs.getString(PreferenceKey.user) ?? '');
-      if (userProfile.roles?.any((element) => element.id == 4) ?? false) {
+    log('main : ${_userProfile.toString()}');
+    if ((_userProfile?.roles?.isNotEmpty ?? false)) {
+      if (_userProfile?.roles?.any((element) => element.id == 4) ?? false) {
         return const GuardMainContainer();
       } else {
         return const MainContainer();

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:maxsociety/main.dart';
+import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/forgot_password/forgot_password_screen.dart';
 import 'package:maxsociety/screen/login/login_message.dart';
 import 'package:maxsociety/screen/login/notice_row.dart';
+import 'package:maxsociety/screen/security_guard/guard_main_container.dart';
 import 'package:maxsociety/util/colors.dart';
 import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/theme.dart';
@@ -75,11 +77,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 .loginUserWithEmailAndPassword(
                     _emailCtrl.text.trim(), _passwordCtrl.text.trim())
                 .then((value) {
-                  
               if (_auth.status == AuthStatus.authenticated &&
                   prefs.containsKey(PreferenceKey.user)) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    MainContainer.routePath, (route) => false);
+                // ignore: no_leading_underscores_for_local_identifiers
+                UserProfile _userProfile = UserProfile.fromJson(
+                    prefs.getString(PreferenceKey.user) ?? '');
+                if (_userProfile.roles?.any((element) => element.id == 4) ??
+                    false) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      GuardMainContainer.routePath, (route) => false);
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      MainContainer.routePath, (route) => false);
+                }
               }
             });
           },
