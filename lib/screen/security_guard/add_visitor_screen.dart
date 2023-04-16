@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:maxsociety/screen/event/visitor_notification_screen.dart';
 import 'package:maxsociety/screen/security_guard/flat_list_screen.dart';
+import 'package:maxsociety/util/enums.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -124,10 +126,10 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
               "flatNo": _flatNoCtrl.text,
               "visitorName": _visitorNameCtrl.text,
               "visitPurpose": _purposeCtrl.text,
-              "status": "PENDING",
+              "status": NotificationStatus.PENDING.name,
               "title": "You have a visitor",
               "body": '${_visitorNameCtrl.text} wants to visit your flat',
-              "path": '/notification'
+              "path": VisitorNotificationScreen.routePath
             };
 
             _api.sendVisitorNotification(reqBody).then((value) {

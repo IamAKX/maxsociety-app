@@ -14,6 +14,8 @@ import 'package:maxsociety/service/api_service.dart';
 import 'package:maxsociety/service/auth_service.dart';
 import 'package:maxsociety/service/db_service.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
+import 'package:maxsociety/util/colors.dart';
+import 'package:maxsociety/util/enums.dart';
 import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/router.dart';
 import 'package:maxsociety/util/theme.dart';
@@ -23,6 +25,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
+import 'model/visitors_record_model.dart';
 
 late SharedPreferences prefs;
 UserProfile? _userProfile;
@@ -86,6 +89,7 @@ Future<void> setupFirebaseMessaging() async {
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     if (message.notification != null) {
+      log(message.toMap().toString());
       publishNotification(message.notification?.title ?? '',
           message.notification?.body ?? '', message.data);
     }
@@ -93,7 +97,12 @@ Future<void> setupFirebaseMessaging() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    if (message.data['type'] == 'chat') {}
+    if (prefs.containsKey(PreferenceKey.user) &&
+        navigatorKey.currentContext != null &&
+        navigatorKey.currentState != null) {
+      Navigator.of(navigatorKey.currentContext!)
+          .pushNamed(message.data['path']);
+    }
   });
 }
 
@@ -119,28 +128,56 @@ Future<void> publishNotification(
   //     android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
   // await flutterLocalNotificationsPlugin
   //     .show(0, title, body, platformChannelSpecifics, payload: 'test');
-  log('data : $data');
+
   if (navigatorKey.currentContext != null &&
       navigatorKey.currentState != null) {
-    AwesomeDialog(
-      context: navigatorKey.currentContext!,
-      dialogType: DialogType.question,
-      animType: AnimType.bottomSlide,
-      title: title,
-      desc: body,
-      autoDismiss: false,
-      btnCancelText: 'Denied',
-      btnOkText: 'Allow',
-      btnCancelColor: Colors.red,
-      btnOkColor: Colors.green,
-      onDismissCallback: (type) {},
-      btnCancelOnPress: () {
-        navigatorKey.currentState!.pop();
-      },
-      btnOkOnPress: () {
-        navigatorKey.currentState!.pop();
-      },
-    ).show();
+    if (data['status'] != NotificationStatus.PENDING.name) {
+      AwesomeDialog(
+        context: navigatorKey.currentContext!,
+        dialogType: getDialogType(data['status']),
+        animType: AnimType.bottomSlide,
+        title: title,
+        desc: body,
+        autoDismiss: false,
+        btnOkText: 'Okay',
+        btnCancelColor: Colors.red,
+        btnOkColor: primaryColor,
+        onDismissCallback: (type) {},
+        btnOkOnPress: () {
+          navigatorKey.currentState!.pop();
+        },
+      ).show();
+    } else {
+      AwesomeDialog(
+        context: navigatorKey.currentContext!,
+        dialogType: getDialogType(data['status']),
+        animType: AnimType.bottomSlide,
+        title: title,
+        desc: body,
+        autoDismiss: false,
+        btnCancelText: 'Denied',
+        btnOkText: 'Allow',
+        btnCancelColor: Colors.red,
+        btnOkColor: Colors.green,
+        onDismissCallback: (type) {},
+        btnCancelOnPress: () {
+          navigatorKey.currentState!.pop();
+          VisiorsRecordModel reqBody = VisiorsRecordModel.fromMap(data);
+          reqBody.status = NotificationStatus.REJECTED.name;
+          reqBody.title = 'Entry is denied';
+          reqBody.body = 'Do not permit ${reqBody.visitorName} to enter';
+          ApiProvider.instance.sendVisitorNotification(reqBody.toMap());
+        },
+        btnOkOnPress: () {
+          navigatorKey.currentState!.pop();
+          VisiorsRecordModel reqBody = VisiorsRecordModel.fromMap(data);
+          reqBody.status = NotificationStatus.APPROVED.name;
+          reqBody.title = 'Entry is approved';
+          reqBody.body = 'Please allow ${reqBody.visitorName} to enter';
+          ApiProvider.instance.sendVisitorNotification(reqBody.toMap());
+        },
+      ).show();
+    }
   }
 }
 
@@ -169,7 +206,6 @@ class MyApp extends StatelessWidget {
   }
 
   getStartUpScreen() {
-    log('main : ${_userProfile.toString()}');
     if ((_userProfile?.roles?.isNotEmpty ?? false)) {
       if (_userProfile?.roles?.any((element) => element.id == 4) ?? false) {
         return const GuardMainContainer();
@@ -180,4 +216,10 @@ class MyApp extends StatelessWidget {
       return const AppIntroScreen();
     }
   }
+}
+
+DialogType getDialogType(String status) {
+  if (status == NotificationStatus.APPROVED.name) return DialogType.success;
+  if (status == NotificationStatus.REJECTED.name) return DialogType.error;
+  return DialogType.question;
 }

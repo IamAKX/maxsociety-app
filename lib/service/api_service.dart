@@ -1174,6 +1174,39 @@ class ApiProvider extends ChangeNotifier {
     return recordModel;
   }
 
+  Future<VisitorRecordListModel> getAllVisitorRecordByFlatNo(String flatNo) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late VisitorRecordListModel recordModel;
+    try {
+      Response response = await _dio.get(
+        '${Api.getNotifications}?flatNo=$flatNo',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        recordModel = VisitorRecordListModel.fromMap(response.data['data']);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return recordModel;
+  }
+
   Future<bool> sendVisitorNotification(Map reqBody) async {
     status = ApiStatus.loading;
     notifyListeners();

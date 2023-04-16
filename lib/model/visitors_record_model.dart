@@ -77,7 +77,7 @@ class VisiorsRecordModel {
 
   factory VisiorsRecordModel.fromMap(Map<String, dynamic> map) {
     return VisiorsRecordModel(
-      id: map['id']?.toInt(),
+      id: map['id'].runtimeType == int ? map['id'] : int.parse(map['id']),
       guardId: map['guardId'],
       flatNo: map['flatNo'],
       visitorName: map['visitorName'],

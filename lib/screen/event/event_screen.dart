@@ -6,6 +6,7 @@ import 'package:maxsociety/main.dart';
 import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/event/create_event.dart';
+import 'package:maxsociety/screen/event/visitor_notification_screen.dart';
 import 'package:maxsociety/util/colors.dart';
 import 'package:maxsociety/util/enums.dart';
 import 'package:maxsociety/util/preference_key.dart';
@@ -105,10 +106,6 @@ class _EventScreenState extends State<EventScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.notifications_outlined),
-          ),
           TextButton(
             onPressed: () {
               Navigator.of(context)
@@ -118,6 +115,16 @@ class _EventScreenState extends State<EventScreen> {
               });
             },
             child: const Text('Create'),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamed(VisitorNotificationScreen.routePath)
+                  .then((value) {
+                loadCirculars();
+              });
+            },
+            icon: const Icon(Icons.notifications_outlined),
           ),
           const ActionbarPopupMenu(),
         ],

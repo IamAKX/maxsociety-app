@@ -16,6 +16,7 @@ import 'package:maxsociety/screen/admin_controls/society_member_list.dart';
 import 'package:maxsociety/screen/admin_controls/user_detail_screen.dart';
 import 'package:maxsociety/screen/event/create_event.dart';
 import 'package:maxsociety/screen/event/event_detail.dart';
+import 'package:maxsociety/screen/event/visitor_notification_screen.dart';
 import 'package:maxsociety/screen/forgot_password/forgot_password_screen.dart';
 import 'package:maxsociety/screen/login/login_screen.dart';
 import 'package:maxsociety/screen/profile/add_family_screen.dart';
@@ -87,6 +88,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const AddFamilyMemberScreen());
       case AboutSocietyScreen.routePath:
         return MaterialPageRoute(builder: (_) => const AboutSocietyScreen());
+      case VisitorNotificationScreen.routePath:
+        return MaterialPageRoute(builder: (_) => const VisitorNotificationScreen());
       case SocietyRuleScreen.routePath:
         return MaterialPageRoute(builder: (_) => const SocietyRuleScreen());
       case SocietyRuleDetailsScreen.routePath:
