@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 
 import '../model/circular_model.dart';
+import '../model/visitors_record_model.dart';
 
 enum ReportGeneratorStatus { ideal, loading, success, failed }
 
@@ -617,6 +618,88 @@ class ReportGeneratorProvider extends ChangeNotifier {
       }
       final List<int> bytes = workbook.saveAsStream();
       File('$filePath/TenantMember_${currentDateForFileName()}.xlsx')
+          .writeAsBytes(bytes);
+
+      workbook.dispose();
+      SnackBarService.instance.showSnackBarSuccess('Report generated');
+      status = ReportGeneratorStatus.ideal;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      status = ReportGeneratorStatus.ideal;
+      notifyListeners();
+    }
+    return false;
+  }
+
+  Future<bool> generateVisitorReport() async {
+    if (Platform.isIOS) {
+      await getApplicationDocumentsDirectory().then((dir) => dir.path);
+    } else {
+      filePath = '/storage/emulated/0/Download';
+    }
+    SnackBarService.instance
+        .showSnackBarInfo('Generating report, please wait...');
+
+    status = ReportGeneratorStatus.loading;
+    notifyListeners();
+    try {
+      List<VisiorsRecordModel> record = [];
+      await ApiProvider.instance.getAllVisitorRecord().then((value) {
+        record = value.gateKeepRequests ?? [];
+      });
+      if (record.isEmpty) {
+        SnackBarService.instance.showSnackBarError('No data to export');
+        status = ReportGeneratorStatus.ideal;
+        notifyListeners();
+        return false;
+      }
+
+      List<String> headers = [
+        'Flat No',
+        'Visitor Name',
+        'Visit Purpose',
+        'Guard Number',
+        'Visit Time',
+        'Action Time',
+        'Status',
+      ];
+      final Workbook workbook = Workbook();
+      Style globalStyle = workbook.styles.add('style');
+      globalStyle.bold = true;
+      final Worksheet sheet = workbook.worksheets[0];
+      String cName = 'Visitor';
+
+      sheet.name = cName;
+      // Adding header
+      for (var hIndex = 0; hIndex < headers.length; hIndex++) {
+        sheet.getRangeByIndex(1, hIndex + 1).setText(headers.elementAt(hIndex));
+        sheet.getRangeByIndex(1, hIndex + 1).cellStyle = globalStyle;
+      }
+      for (var rIndex = 0; rIndex < record.length; rIndex++) {
+        VisiorsRecordModel c = record.elementAt(rIndex);
+
+        sheet.getRangeByIndex(rIndex + 2, 1).setText(c.flatNo);
+
+        sheet.getRangeByIndex(rIndex + 2, 2).setText(c.visitorName ?? '');
+        sheet.getRangeByIndex(rIndex + 2, 3).setText(c.visitPurpose ?? '');
+        sheet.getRangeByIndex(rIndex + 2, 4).setText(c.guardName ?? '');
+        sheet
+            .getRangeByIndex(rIndex + 2, 5)
+            .setText(eventDateToDateTime(c.gkReqInitTime ?? ''));
+        sheet
+            .getRangeByIndex(rIndex + 2, 6)
+            .setText(eventDateToDateTime(c.gkReqActionTime ?? ''));
+        sheet.getRangeByIndex(rIndex + 2, 7).setText(c.status);
+
+        int col = 1;
+        while (col <= 7) {
+          sheet.autoFitColumn(col);
+          col++;
+        }
+      }
+      final List<int> bytes = workbook.saveAsStream();
+      File('$filePath/$cName${currentDateForFileName()}.xlsx')
           .writeAsBytes(bytes);
 
       workbook.dispose();

@@ -118,6 +118,20 @@ class _ReportScreenState extends State<ReportScreen> {
                 .generateSocietyMemberReport('AUDITOR');
           },
         ),
+        const Divider(
+          color: textColorDark,
+        ),
+        ListTile(
+          title: Text('Vistors report',
+              style: Theme.of(context).textTheme.titleMedium),
+          trailing: const Icon(
+            Icons.chevron_right_outlined,
+            color: hintColor,
+          ),
+          onTap: () async {
+            await ReportGeneratorProvider.instance.generateVisitorReport();
+          },
+        ),
       ],
     );
   }
