@@ -238,7 +238,7 @@ class _VisitorNotificationScreenState extends State<VisitorNotificationScreen> {
       btnOkOnPress: () {
         navigatorKey.currentState!.pop();
         VisiorsRecordModel reqBody = record.elementAt(index);
-        reqBody.status = NotificationStatus.REJECTED.name;
+        reqBody.status = NotificationStatus.APPROVED.name;
         reqBody.title = 'Entry is approved';
         reqBody.body = 'Please allow ${reqBody.visitorName} to enter';
         _api
