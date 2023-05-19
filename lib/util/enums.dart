@@ -31,3 +31,5 @@ enum GalleryItemType { IMAGE, VIDEO }
 enum FlatType { RESIDENTIAL, COMMERCIAL }
 
 enum NotificationStatus { PENDING, APPROVED, REJECTED }
+
+enum DelinkStatus { PENDING, ACCEPT, REJECT }

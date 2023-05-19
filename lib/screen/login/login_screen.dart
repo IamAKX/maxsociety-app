@@ -12,7 +12,9 @@ import 'package:maxsociety/widget/button_active.dart';
 import 'package:maxsociety/widget/custom_textfield.dart';
 import 'package:maxsociety/widget/heading.dart';
 import 'package:maxsociety/widget/main_container.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:request_permission/request_permission.dart';
 
 import '../../service/auth_service.dart';
 import '../../service/snakbar_service.dart';
@@ -29,7 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
   late AuthProvider _auth;
-
   @override
   Widget build(BuildContext context) {
     SnackBarService.instance.buildContext = context;
@@ -69,29 +70,34 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         ActiveButton(
           onPressed: () async {
+            if (await Permission.phone.request().isGranted) {
+              await _auth
+                  .loginUserWithEmailAndPassword(
+                      _emailCtrl.text.trim(), _passwordCtrl.text.trim())
+                  .then((value) {
+                if (_auth.status == AuthStatus.authenticated &&
+                    prefs.containsKey(PreferenceKey.user)) {
+                  // ignore: no_leading_underscores_for_local_identifiers
+                  UserProfile _userProfile = UserProfile.fromJson(
+                      prefs.getString(PreferenceKey.user) ?? '');
+                  if (_userProfile.roles?.any((element) => element.id == 4) ??
+                      false) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        GuardMainContainer.routePath, (route) => false);
+                  } else {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        MainContainer.routePath, (route) => false);
+                  }
+                }
+              });
+            } else {
+              SnackBarService.instance.showSnackBarError(
+                  'Please provide Phone access to get device unique id');
+            }
             // Navigator.of(context).pushNamedAndRemoveUntil(
             //     MainContainer.routePath, (route) => false);
             // await _auth.registerUserWithEmailAndPassword(
             //     'Admin', 'maxsocietyimp@gmail.com', 'admin123');
-            await _auth
-                .loginUserWithEmailAndPassword(
-                    _emailCtrl.text.trim(), _passwordCtrl.text.trim())
-                .then((value) {
-              if (_auth.status == AuthStatus.authenticated &&
-                  prefs.containsKey(PreferenceKey.user)) {
-                // ignore: no_leading_underscores_for_local_identifiers
-                UserProfile _userProfile = UserProfile.fromJson(
-                    prefs.getString(PreferenceKey.user) ?? '');
-                if (_userProfile.roles?.any((element) => element.id == 4) ??
-                    false) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      GuardMainContainer.routePath, (route) => false);
-                } else {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      MainContainer.routePath, (route) => false);
-                }
-              }
-            });
           },
           label: _auth.status == AuthStatus.authenticating
               ? 'Please wait...'

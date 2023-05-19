@@ -1,5 +1,5 @@
 class Api {
-  static const String baseUrl = 'http://13.234.117.189:80/';
+  static const String baseUrl = 'http://13.126.46.177:80/';
 
   // users
   static const String getAllUsers = '${baseUrl}maxsociety/users/';
@@ -60,4 +60,14 @@ class Api {
       '${baseUrl}maxsociety/notifications/getNotifications';
   static const String sendNotification =
       '${baseUrl}maxsociety/notifications/sendNotification';
+
+// deregister
+  static const String createDeRegistrationRequests =
+      '${baseUrl}maxsociety/dereg';
+  static const String updateDeRegistrationRequests =
+      '${baseUrl}maxsociety/dereg/';
+  static const String getDeRegistrationRequest =
+      '${baseUrl}maxsociety/dereg/';
+  static const String getAllDeRegistrationRequests =
+      '${baseUrl}maxsociety/dereg';
 }

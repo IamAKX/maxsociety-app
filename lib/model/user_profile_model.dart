@@ -22,6 +22,7 @@ class UserProfile {
   String? updatedOn;
   int? familyMembersCount;
   String? fcmToken;
+  String? imei;
   UserProfile({
     this.userId,
     this.userName,
@@ -39,6 +40,7 @@ class UserProfile {
     this.updatedOn,
     this.familyMembersCount,
     this.fcmToken,
+    this.imei,
   });
 
   UserProfile copyWith({
@@ -58,6 +60,7 @@ class UserProfile {
     String? updatedOn,
     int? familyMembersCount,
     String? fcmToken,
+    String? imei,
   }) {
     return UserProfile(
       userId: userId ?? this.userId,
@@ -76,6 +79,7 @@ class UserProfile {
       updatedOn: updatedOn ?? this.updatedOn,
       familyMembersCount: familyMembersCount ?? this.familyMembersCount,
       fcmToken: fcmToken ?? this.fcmToken,
+      imei: imei ?? this.imei,
     );
   }
 
@@ -97,6 +101,7 @@ class UserProfile {
       'updatedOn': updatedOn,
       'familyMembersCount': familyMembersCount,
       'fcmToken': fcmToken,
+      'imei': imei,
     };
   }
 
@@ -120,6 +125,7 @@ class UserProfile {
       updatedOn: map['updatedOn'],
       familyMembersCount: map['familyMembersCount']?.toInt(),
       fcmToken: map['fcmToken'],
+      imei: map['imei'],
     );
   }
 
@@ -130,7 +136,7 @@ class UserProfile {
 
   @override
   String toString() {
-    return 'UserProfile(userId: $userId, userName: $userName, relationship: $relationship, mobileNo: $mobileNo, gender: $gender, dob: $dob, email: $email, imagePath: $imagePath, flats: $flats, roles: $roles, designation: $designation, category: $category, createdOn: $createdOn, updatedOn: $updatedOn, familyMembersCount: $familyMembersCount, fcmToken: $fcmToken)';
+    return 'UserProfile(userId: $userId, userName: $userName, relationship: $relationship, mobileNo: $mobileNo, gender: $gender, dob: $dob, email: $email, imagePath: $imagePath, flats: $flats, roles: $roles, designation: $designation, category: $category, createdOn: $createdOn, updatedOn: $updatedOn, familyMembersCount: $familyMembersCount, fcmToken: $fcmToken, imei: $imei)';
   }
 
   @override
@@ -153,7 +159,8 @@ class UserProfile {
         other.createdOn == createdOn &&
         other.updatedOn == updatedOn &&
         other.familyMembersCount == familyMembersCount &&
-        other.fcmToken == fcmToken;
+        other.fcmToken == fcmToken &&
+        other.imei == imei;
   }
 
   @override
@@ -173,6 +180,7 @@ class UserProfile {
         createdOn.hashCode ^
         updatedOn.hashCode ^
         familyMembersCount.hashCode ^
-        fcmToken.hashCode;
+        fcmToken.hashCode ^
+        imei.hashCode;
   }
 }

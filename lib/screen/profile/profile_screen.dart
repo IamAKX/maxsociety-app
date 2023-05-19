@@ -9,6 +9,7 @@ import 'package:maxsociety/main.dart';
 import 'package:maxsociety/model/operation_detail_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/screen/login/login_screen.dart';
+import 'package:maxsociety/screen/profile/deregister_device_screen.dart';
 import 'package:maxsociety/screen/profile/family_screen.dart';
 import 'package:maxsociety/screen/profile/profile_detail_update.dart';
 import 'package:maxsociety/screen/profile/profile_menu_model.dart';
@@ -91,6 +92,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       icon: Icons.lock_outline,
       title: 'Change Password',
       navigatorRoute: ChangePasswordScreen.routePath,
+    ),
+    ProfileMenuModel(
+      icon: Icons.mobile_off_rounded,
+      title: 'Deregister Device',
+      navigatorRoute: DeregisterDeviceScreen.routePath,
     ),
   ];
 

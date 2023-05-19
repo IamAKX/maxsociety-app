@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:maxsociety/model/app_metadata_model.dart';
 import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
@@ -20,6 +21,7 @@ import 'package:maxsociety/util/preference_key.dart';
 import 'package:maxsociety/util/router.dart';
 import 'package:maxsociety/util/theme.dart';
 import 'package:maxsociety/widget/main_container.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,6 +39,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -48,8 +51,16 @@ Future<void> main() async {
   //       await ApiProvider.instance.getUserById(userProfile.userId!);
   //   prefs.setString(PreferenceKey.user, user.toJson());
   // }
+  while (!await Permission.phone.request().isGranted) {
+    Fluttertoast.showToast(
+        msg: 'Please provide phone access to register the device',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        backgroundColor: Colors.red,
+        textColor: Colors.white);
+  }
   await setupFirebaseMessaging();
-
+  log('FCM setup complete');
   SocietyModel societyModel = await ApiProvider.instance.getSociety();
   prefs.setString(PreferenceKey.society, societyModel.toJson());
   await DBService.instance.getAppMetadata();

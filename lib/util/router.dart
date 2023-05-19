@@ -8,6 +8,7 @@ import 'package:maxsociety/screen/admin_controls/create_mom_screen.dart';
 import 'package:maxsociety/screen/admin_controls/create_rule_screen.dart';
 import 'package:maxsociety/screen/admin_controls/create_security_member.dart';
 import 'package:maxsociety/screen/admin_controls/create_society_member.dart';
+import 'package:maxsociety/screen/admin_controls/delink_request_update_sceen.dart';
 import 'package:maxsociety/screen/admin_controls/flat_screen.dart';
 import 'package:maxsociety/screen/admin_controls/flat_summary.dart';
 import 'package:maxsociety/screen/admin_controls/security_guard_list.dart';
@@ -21,6 +22,7 @@ import 'package:maxsociety/screen/forgot_password/forgot_password_screen.dart';
 import 'package:maxsociety/screen/login/login_screen.dart';
 import 'package:maxsociety/screen/profile/add_family_screen.dart';
 import 'package:maxsociety/screen/profile/add_vehicle_screen.dart';
+import 'package:maxsociety/screen/profile/deregister_device_screen.dart';
 import 'package:maxsociety/screen/profile/edit_vehicle_screen.dart';
 import 'package:maxsociety/screen/profile/family_screen.dart';
 import 'package:maxsociety/screen/profile/profile_detail_update.dart';
@@ -59,6 +61,12 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
       case ChangePasswordScreen.routePath:
         return MaterialPageRoute(builder: (_) => const ChangePasswordScreen());
+      case DelinkRequestUpdateScreen.routePath:
+        return MaterialPageRoute(
+            builder: (_) => const DelinkRequestUpdateScreen());
+      case DeregisterDeviceScreen.routePath:
+        return MaterialPageRoute(
+            builder: (_) => const DeregisterDeviceScreen());
       case MainContainer.routePath:
         return MaterialPageRoute(builder: (_) => const MainContainer());
       case GuardMainContainer.routePath:
@@ -89,7 +97,8 @@ class NavRoute {
       case AboutSocietyScreen.routePath:
         return MaterialPageRoute(builder: (_) => const AboutSocietyScreen());
       case VisitorNotificationScreen.routePath:
-        return MaterialPageRoute(builder: (_) => const VisitorNotificationScreen());
+        return MaterialPageRoute(
+            builder: (_) => const VisitorNotificationScreen());
       case SocietyRuleScreen.routePath:
         return MaterialPageRoute(builder: (_) => const SocietyRuleScreen());
       case SocietyRuleDetailsScreen.routePath:

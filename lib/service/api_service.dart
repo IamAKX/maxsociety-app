@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:device_information/device_information.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:maxsociety/main.dart';
 import 'package:maxsociety/model/circular_model.dart';
 import 'package:maxsociety/model/flat_model.dart';
 import 'package:maxsociety/model/list/circular_list_model.dart';
+import 'package:maxsociety/model/list/delink_list_model.dart';
 import 'package:maxsociety/model/list/emergency_contact_list_model.dart';
 import 'package:maxsociety/model/list/flat_list_model.dart';
 import 'package:maxsociety/model/list/gallery_list_model.dart';
@@ -15,8 +17,10 @@ import 'package:maxsociety/model/list/visitor_record_list_model.dart';
 import 'package:maxsociety/model/society_model.dart';
 import 'package:maxsociety/model/user_profile_model.dart';
 import 'package:maxsociety/model/vehicle_model.dart';
+import 'package:maxsociety/service/auth_service.dart';
 import 'package:maxsociety/service/snakbar_service.dart';
 import 'package:maxsociety/util/api.dart';
+import 'package:maxsociety/util/enums.dart';
 import 'package:maxsociety/util/helper_methods.dart';
 import 'package:maxsociety/util/preference_key.dart';
 
@@ -73,6 +77,8 @@ class ApiProvider extends ChangeNotifier {
   Future<bool> updateUser(UserProfile userProfile) async {
     status = ApiStatus.loading;
     notifyListeners();
+    userProfile.imei = await DeviceInformation.deviceIMEINumber;
+
     try {
       var map = userProfile.toMap();
       if (userProfile.flats != null) {
@@ -115,6 +121,7 @@ class ApiProvider extends ChangeNotifier {
   Future<bool> updateUserSilently(UserProfile userProfile) async {
     status = ApiStatus.loading;
     notifyListeners();
+    userProfile.imei = await DeviceInformation.deviceIMEINumber;
     try {
       var map = userProfile.toMap();
       if (userProfile.flats != null) {
@@ -152,13 +159,15 @@ class ApiProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<UserProfile> getUserById(String userId) async {
+  Future<UserProfile?> getUserById(String userId) async {
     status = ApiStatus.loading;
     notifyListeners();
-    late UserProfile userProfile;
+    String imei = await DeviceInformation.deviceIMEINumber;
+    log('api : ${Api.getUserByUserId}$userId/$imei');
+    UserProfile? userProfile;
     try {
       Response response = await _dio.get(
-        '${Api.getUserByUserId}$userId',
+        '${Api.getUserByUserId}$userId/$imei',
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,
@@ -173,12 +182,15 @@ class ApiProvider extends ChangeNotifier {
       status = ApiStatus.failed;
       var resBody = e.response?.data ?? {};
       log(e.response?.data.toString() ?? e.response.toString());
+
       notifyListeners();
+      await AuthProvider.instance.logoutUser();
       // SnackBarService.instance
       //     .showSnackBarError('Error : ${resBody['message']}');
     } catch (e) {
       status = ApiStatus.failed;
       notifyListeners();
+      await AuthProvider.instance.logoutUser();
       // SnackBarService.instance.showSnackBarError(e.toString());
       log(e.toString());
     }
@@ -1174,7 +1186,8 @@ class ApiProvider extends ChangeNotifier {
     return recordModel;
   }
 
-  Future<VisitorRecordListModel> getAllVisitorRecordByFlatNo(String flatNo) async {
+  Future<VisitorRecordListModel> getAllVisitorRecordByFlatNo(
+      String flatNo) async {
     status = ApiStatus.loading;
     notifyListeners();
     late VisitorRecordListModel recordModel;
@@ -1213,6 +1226,119 @@ class ApiProvider extends ChangeNotifier {
     try {
       Response response = await _dio.post(
         Api.sendNotification,
+        data: json.encode(reqBody),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess(response.data['message']);
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> createDeRegistrationRequest(
+      String userId, String createdByName) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      var reqBody = {
+        "userId": userId,
+        "createdBy": createdByName,
+        "status": DelinkStatus.PENDING.name
+      };
+      Response response = await _dio.post(
+        Api.createDeRegistrationRequests,
+        data: json.encode(reqBody),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        SnackBarService.instance.showSnackBarSuccess(response.data['message']);
+        return true;
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return false;
+  }
+
+  Future<DelinkListModel> getAllPendingDelinkRequest() async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    late DelinkListModel delinkListModel;
+    try {
+      Response response = await _dio.get(
+        '${Api.getAllDeRegistrationRequests}/?status=${DelinkStatus.PENDING.name}',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        delinkListModel = DelinkListModel.fromMap(response.data);
+      }
+    } on DioError catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    return delinkListModel;
+  }
+
+  Future<bool> updateDeRegistrationRequest(
+      String userId, String createdByName, int reqId, String reqStatus) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      var reqBody = {
+        "userId": userId,
+        "createdBy": createdByName,
+        "status": reqStatus
+      };
+      Response response = await _dio.put(
+        '${Api.updateDeRegistrationRequests}$reqId',
         data: json.encode(reqBody),
         options: Options(
           contentType: 'application/json',

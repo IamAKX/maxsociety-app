@@ -77,8 +77,14 @@ class AuthProvider extends ChangeNotifier {
         logoutUser();
       } else {
         // TODO : update last login or any api call after auth
-        UserProfile userProfile =
+        UserProfile? userProfile =
             await ApiProvider.instance.getUserById(user!.uid);
+        if (userProfile == null) {
+          SnackBarService.instance
+              .showSnackBarError("Error : Unauthorized device");
+          logoutUser();
+          return;
+        }
         prefs.setString(PreferenceKey.user, userProfile.toJson());
 
         if (prefs.containsKey(PreferenceKey.fcmToken)) {

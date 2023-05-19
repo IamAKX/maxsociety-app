@@ -11,6 +11,7 @@ import 'package:maxsociety/screen/society/society_menu_model.dart';
 import '../../util/colors.dart';
 import '../../util/theme.dart';
 import '../../widget/heading.dart';
+import 'delink_request_update_sceen.dart';
 
 class AdminControlsScreen extends StatefulWidget {
   const AdminControlsScreen({super.key});
@@ -55,6 +56,11 @@ class _AdminControlsScreenState extends State<AdminControlsScreen> {
       icon: Icons.receipt_long_rounded,
       navigatorRoute: ReportScreen.routePath,
       title: 'Report',
+    ),
+    SocietyMenuModel(
+      icon: Icons.mobile_off_outlined,
+      navigatorRoute: DelinkRequestUpdateScreen.routePath,
+      title: 'Delink Requests',
     ),
   ];
 
